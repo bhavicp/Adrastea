@@ -6,7 +6,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 
 /**
  * test
- * @author normenhansen
+ * @author Bhavic
  */
 public class Main extends SimpleApplication {
     
