@@ -25,7 +25,7 @@ public class BattleForAdrastea extends SimpleApplication{
         AppSettings settings = new AppSettings(true);
         settings.setResolution(1600, 900);
         settings.setVSync(true);
-        settings.setFullscreen(true);
+        settings.setFullscreen(false);
         
         BattleForAdrastea app = new BattleForAdrastea();        
         app.setSettings(settings);
