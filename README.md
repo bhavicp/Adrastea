@@ -1,4 +1,3 @@
-Adrastea
+Battle for Adrastea
 ========
-
-Games for Programming
+This is a game being developed by Bhavic, Shane and Brandon for Games Programming Paper
