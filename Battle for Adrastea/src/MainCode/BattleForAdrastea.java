@@ -3,16 +3,15 @@ package MainCode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
-import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
-import com.jme3.terrain.heightmap.HillHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 
@@ -67,7 +66,6 @@ public class BattleForAdrastea extends SimpleApplication{
         
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.0f));        
-        rootNode.addLight(al);        
-        terrain.addLight(al);
+        rootNode.addLight(al);    
     }
 }
