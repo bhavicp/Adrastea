@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>Battle for Adrastea</name>
             <source-roots>
+                <root id="src.assets.dir" name="Project Assets"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
