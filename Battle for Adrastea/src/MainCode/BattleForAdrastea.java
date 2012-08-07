@@ -15,6 +15,8 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -47,8 +49,8 @@ private TerrainQuad terrain;
      */
     public static void main(String[] args) {
         AppSettings gameSettings = new AppSettings(true);
-        gameSettings.setResolution(1920, 1080);
-        //gameSettings.setFullscreen(true);
+        gameSettings.setResolution(1500, 900);
+        gameSettings.setFullscreen(false);
         gameSettings.setVSync(true);
         gameSettings.setTitle("Game");
         gameSettings.setUseInput(true);
