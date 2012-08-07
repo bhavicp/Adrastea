@@ -37,6 +37,8 @@ public class Game extends SimpleApplication{
         Spatial sceneModel = assetManager.loadModel("Scenes/WorldScene.j3o");
         sceneModel.setLocalTranslation(0,0,0);
         rootNode.attachChild(sceneModel);
+        
+        
     }
 
     private void setUpTank() {
