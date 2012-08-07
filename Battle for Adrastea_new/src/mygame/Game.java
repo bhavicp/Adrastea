@@ -10,6 +10,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 
 /**
@@ -25,6 +26,27 @@ public class Game extends SimpleApplication{
         setUpLighting();
         setUpWorldTerrain();    
         setUpTank();
+        
+        setUpHUD();        
+    }
+
+    private void setUpHUD() {
+        setDisplayStatView(false);
+        setDisplayFps(false);
+        
+        Picture missilePicture = new Picture("Missile Picture");
+        missilePicture.setImage(assetManager, "Textures/MissileDisplay.png", true);
+        missilePicture.setWidth(178);
+        missilePicture.setHeight(78);
+        missilePicture.setPosition(0,settings.getHeight() - 78);
+        guiNode.attachChild(missilePicture);
+        
+        Picture bulletPicture = new Picture("Missile Picture");
+        bulletPicture.setImage(assetManager, "Textures/BulletDisplay.png", true);
+        bulletPicture.setWidth(178);
+        bulletPicture.setHeight(78);
+        bulletPicture.setPosition(settings.getWidth() - 178,settings.getHeight() - 78);
+        guiNode.attachChild(bulletPicture);
         
     }
 
