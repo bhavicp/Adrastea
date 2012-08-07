@@ -10,6 +10,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.util.SkyFactory;
 
 /**
  *
@@ -37,8 +38,6 @@ public class Game extends SimpleApplication{
         Spatial sceneModel = assetManager.loadModel("Scenes/WorldScene.j3o");
         sceneModel.setLocalTranslation(0,0,0);
         rootNode.attachChild(sceneModel);
-        
-        
     }
 
     private void setUpTank() {
