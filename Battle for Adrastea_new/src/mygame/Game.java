@@ -9,6 +9,7 @@ import com.jme3.asset.plugins.FileLocator;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import com.jme3.system.AppSettings;
 
 /**
  *
@@ -46,7 +47,21 @@ public class Game extends SimpleApplication{
     }
     
     public static void main(String[] args){
+        
+        AppSettings gameSettings = new AppSettings(true);
+        //gameSettings.setResolution(1920, 1080);
+        gameSettings.setResolution(800, 600);
+        gameSettings.setFullscreen(false);
+        gameSettings.setVSync(true);
+        gameSettings.setTitle("Game");
+        gameSettings.setUseInput(true);
+        gameSettings.setFrameRate(500);
+        gameSettings.setSamples(0);
+        gameSettings.setRenderer("LWJGL-OpenGL2");
+        
         Game game = new Game();
+        game.setSettings(gameSettings);
+        game.setShowSettings(false);
         game.start();
     }
 }
