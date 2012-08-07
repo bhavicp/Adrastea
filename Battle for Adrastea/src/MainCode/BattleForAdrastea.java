@@ -2,6 +2,7 @@ package MainCode;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -22,6 +23,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.system.AppSettings;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -29,6 +31,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
+import java.util.List;
 
 
 public class BattleForAdrastea extends SimpleApplication implements ActionListener{
@@ -43,7 +46,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private float wheelRadius;
     private float steeringValue = 0;
     private float accelerationValue = 0;
-    Node vehicleNode  = new Node("vehicleNode");
+    Node model  = new Node("vehicleNode");
         
     /**
      * @param args the command line arguments
@@ -62,13 +65,13 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
 
     @Override
     public void simpleInitApp() {
-        flyCam.setMoveSpeed(50);
+        flyCam.setMoveSpeed(10);
         
         //Need for physics
          bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         //Debugging
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     
         assetManager.registerLocator("./assets", FileLocator.class);        
               
@@ -115,82 +118,88 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
    
     
     private void setuptanks() {
-       //ullCollisionShape shape = new HullCollisionShape(katamari_geo.getMesh());
-         Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+       //hullCollisionShape shape = new HullCollisionShape(katamari_geo.getMesh());
+        Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.getAdditionalRenderState().setWireframe(true);
         mat.setColor("Color", ColorRGBA.Red);
 
-        //create a compound shape and attach the BoxCollisionShape for the car body at 0,1,0
-        //this shifts the effective center of mass of the BoxCollisionShape to 0,-1,0
-        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
-        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f));
-        compoundShape.addChildShape(box, new Vector3f(0, 1, 0));
-
+        
+        Node model = (Node) assetManager.loadModel(
+        "Models/HoverTank/tank.mesh.xml" );
+        Geometry chasis = findGeom(model, "tank-geom-1");
+        BoundingBox box = (BoundingBox) chasis.getModelBound();
+       
+        
+    
+        
+        //Create a hull collision shape for the chassis
+        CollisionShape tank = CollisionShapeFactory.createDynamicMeshShape(chasis);
+        
         //create vehicle node
         
-        vehicleControl = new VehicleControl(compoundShape, 400);
-        vehicleNode.addControl(vehicleControl);
+        vehicleControl = new VehicleControl(tank, 400);
+        model.addControl(vehicleControl);
 
-        //setting suspension values for wheels, this can be a bit tricky
-        //see also https://docs.google.com/Doc?docid=0AXVUZ5xw6XpKZGNuZG56a3FfMzU0Z2NyZnF4Zmo&hl=en
-        float stiffness = 10.0f;//200=f1 car
-        float compValue = 0.4f; //(should be lower than damp)
-        float dampValue = 0.6f;
-        vehicleControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicleControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicleControl.setSuspensionStiffness(stiffness);
-        vehicleControl.setMaxSuspensionForce(10000.0f);
-
-        //Create four wheels and add them at their locations
-        Vector3f wheelDirection = new Vector3f(0, -1, 0); // was 0, -1, 0
-        Vector3f wheelAxle = new Vector3f(-1, 0, 0); // was -1, 0, 0
-        float radius = 0.5f;
-        float restLength = 0.3f;
-        float yOff = 0.5f;
-        float xOff = 1f;
-        float zOff = 2f;
-
-        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
-
-        Node node1 = new Node("wheel 1 node");
-        Geometry wheels1 = new Geometry("wheel 1", wheelMesh);
-        node1.attachChild(wheels1);
-        wheels1.rotate(0, FastMath.HALF_PI, 0);
-        wheels1.setMaterial(mat);
-        vehicleControl.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
-                wheelDirection, wheelAxle, restLength, radius, true);
-
-        Node node2 = new Node("wheel 2 node");
-        Geometry wheels2 = new Geometry("wheel 2", wheelMesh);
-        node2.attachChild(wheels2);
-        wheels2.rotate(0, FastMath.HALF_PI, 0);
-        wheels2.setMaterial(mat);
-        vehicleControl.addWheel(node2, new Vector3f(xOff, yOff, zOff),
-                wheelDirection, wheelAxle, restLength, radius, true);
-
-        Node node3 = new Node("wheel 3 node");
-        Geometry wheels3 = new Geometry("wheel 3", wheelMesh);
-        node3.attachChild(wheels3);
-        wheels3.rotate(0, FastMath.HALF_PI, 0);
-        wheels3.setMaterial(mat);
-        vehicleControl.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
-                wheelDirection, wheelAxle, restLength, radius, false);
-
-        Node node4 = new Node("wheel 4 node");
-        Geometry wheels4 = new Geometry("wheel 4", wheelMesh);
-        node4.attachChild(wheels4);
-        wheels4.rotate(0, FastMath.HALF_PI, 0);
-        wheels4.setMaterial(mat);
-        vehicleControl.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
-                wheelDirection, wheelAxle, restLength, radius, false);
-
-        vehicleNode.attachChild(node1);
-        vehicleNode.attachChild(node2);
-        vehicleNode.attachChild(node3);
-        vehicleNode.attachChild(node4);
+//        //setting suspension values for wheels, this can be a bit tricky
+//        //see also https://docs.google.com/Doc?docid=0AXVUZ5xw6XpKZGNuZG56a3FfMzU0Z2NyZnF4Zmo&hl=en
+//        float stiffness = 10.0f;//200=f1 car
+//        float compValue = 0.4f; //(should be lower than damp)
+//        float dampValue = 0.6f;
+//        vehicleControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+//        vehicleControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+//        vehicleControl.setSuspensionStiffness(stiffness);
+//        vehicleControl.setMaxSuspensionForce(10000.0f);
+//
+//        //Create four wheels and add them at their locations
+//        Vector3f wheelDirection = new Vector3f(0, -1, 0); // was 0, -1, 0
+//        Vector3f wheelAxle = new Vector3f(-1, 0, 0); // was -1, 0, 0
+//        float radius = 0.5f;
+//        float restLength = 0.3f;
+//        float yOff = 0.5f;
+//        float xOff = 1f;
+//        float zOff = 2f;
+//
+//        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
+//
+//        Node node1 = new Node("wheel 1 node");
+//        Geometry wheels1 = new Geometry("wheel 1", wheelMesh);
+//        node1.attachChild(wheels1);
+//        wheels1.rotate(0, FastMath.HALF_PI, 0);
+//        wheels1.setMaterial(mat);
+//        vehicleControl.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, true);
+//
+//        Node node2 = new Node("wheel 2 node");
+//        Geometry wheels2 = new Geometry("wheel 2", wheelMesh);
+//        node2.attachChild(wheels2);
+//        wheels2.rotate(0, FastMath.HALF_PI, 0);
+//        wheels2.setMaterial(mat);
+//        vehicleControl.addWheel(node2, new Vector3f(xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, true);
+//
+//        Node node3 = new Node("wheel 3 node");
+//        Geometry wheels3 = new Geometry("wheel 3", wheelMesh);
+//        node3.attachChild(wheels3);
+//        wheels3.rotate(0, FastMath.HALF_PI, 0);
+//        wheels3.setMaterial(mat);
+//        vehicleControl.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+//
+//        Node node4 = new Node("wheel 4 node");
+//        Geometry wheels4 = new Geometry("wheel 4", wheelMesh);
+//        node4.attachChild(wheels4);
+//        wheels4.rotate(0, FastMath.HALF_PI, 0);
+//        wheels4.setMaterial(mat);
+//        vehicleControl.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+//
+//        vehicleNode.attachChild(node1);
+//        vehicleNode.attachChild(node2);
+//        vehicleNode.attachChild(node3);
+//        vehicleNode.attachChild(node4);
        
-        vehicleNode.scale( 3.0f, 1.0f, 1.0f );
-        rootNode.attachChild(vehicleNode);
+        //vehicleNode.scale( 3.0f, 1.0f, 1.0f );
+        rootNode.attachChild(model);
 
         getPhysicsSpace().add(vehicleControl);
     
@@ -222,8 +231,8 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     public void simpleUpdate(float tpf) {
         //cam.lookAt(vehicle.getPhysicsLocation(), Vector3f.UNIT_Y);
      
-        this.cam.setLocation( vehicleNode.localToWorld( new Vector3f( 0, 10 /* units above car*/, 10 /* units behind car*/ ), null));
-        this.cam.lookAt(this.vehicleNode.getWorldTranslation(), Vector3f.UNIT_Y);
+        //this.cam.setLocation( vehicleNode.localToWorld( new Vector3f( 0, 10 /* units above car*/, 10 /* units behind car*/ ), null));
+        //this.cam.lookAt(this.vehicleNode.getWorldTranslation(), Vector3f.UNIT_Y);
     }
 
     @Override
@@ -260,6 +269,25 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             
 
         }
+    }
+    
+    
+    private Geometry findGeom(Spatial spatial, String name) {
+        if (spatial instanceof Node) {
+            Node node = (Node) spatial;
+            for (int i = 0; i < node.getQuantity(); i++) {
+                Spatial child = node.getChild(i);
+                Geometry result = findGeom(child, name);
+                if (result != null) {
+                    return result;
+                }
+            }
+        } else if (spatial instanceof Geometry) {
+            if (spatial.getName().startsWith(name)) {
+                return (Geometry) spatial;
+            }
+        }
+        return null;
     }
 }
         
