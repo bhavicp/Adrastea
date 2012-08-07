@@ -11,6 +11,7 @@ import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -35,8 +36,14 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private TerrainQuad terrain;
     private Material mat_terrain;
     private BulletAppState bulletAppState;
-    private VehicleControl vehicle;
-     private RigidBodyControl landscape; //Terrian solid
+    private VehicleControl vehicleControl;
+    private RigidBodyControl landscape; //Terrian solid
+    
+    //Vehicle stuff
+    private float wheelRadius;
+    private float steeringValue = 0;
+    private float accelerationValue = 0;
+    Node vehicleNode  = new Node("vehicleNode");
         
     /**
      * @param args the command line arguments
@@ -67,7 +74,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
               
         Texture heightMapImage = assetManager.loadTexture("Textures/terrain.png");
         AbstractHeightMap heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
-        heightmap.setHeightScale(20);
+        heightmap.setHeightScale(1);
         heightmap.smooth(1);
         heightmap.load();   
         
@@ -102,6 +109,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         
         
        setuptanks();
+       setupKeys();
     }
 
    
@@ -119,19 +127,19 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         compoundShape.addChildShape(box, new Vector3f(0, 1, 0));
 
         //create vehicle node
-        Node vehicleNode  = new Node("vehicleNode");
-        vehicle = new VehicleControl(compoundShape, 400);
-        vehicleNode.addControl(vehicle);
+        
+        vehicleControl = new VehicleControl(compoundShape, 400);
+        vehicleNode.addControl(vehicleControl);
 
         //setting suspension values for wheels, this can be a bit tricky
         //see also https://docs.google.com/Doc?docid=0AXVUZ5xw6XpKZGNuZG56a3FfMzU0Z2NyZnF4Zmo&hl=en
-        float stiffness = 60.0f;//200=f1 car
-        float compValue = .3f; //(should be lower than damp)
-        float dampValue = .4f;
-        vehicle.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicle.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicle.setSuspensionStiffness(stiffness);
-        vehicle.setMaxSuspensionForce(10000.0f);
+        float stiffness = 10.0f;//200=f1 car
+        float compValue = 0.4f; //(should be lower than damp)
+        float dampValue = 0.6f;
+        vehicleControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicleControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicleControl.setSuspensionStiffness(stiffness);
+        vehicleControl.setMaxSuspensionForce(10000.0f);
 
         //Create four wheels and add them at their locations
         Vector3f wheelDirection = new Vector3f(0, -1, 0); // was 0, -1, 0
@@ -149,7 +157,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         node1.attachChild(wheels1);
         wheels1.rotate(0, FastMath.HALF_PI, 0);
         wheels1.setMaterial(mat);
-        vehicle.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
+        vehicleControl.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
                 wheelDirection, wheelAxle, restLength, radius, true);
 
         Node node2 = new Node("wheel 2 node");
@@ -157,7 +165,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         node2.attachChild(wheels2);
         wheels2.rotate(0, FastMath.HALF_PI, 0);
         wheels2.setMaterial(mat);
-        vehicle.addWheel(node2, new Vector3f(xOff, yOff, zOff),
+        vehicleControl.addWheel(node2, new Vector3f(xOff, yOff, zOff),
                 wheelDirection, wheelAxle, restLength, radius, true);
 
         Node node3 = new Node("wheel 3 node");
@@ -165,7 +173,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         node3.attachChild(wheels3);
         wheels3.rotate(0, FastMath.HALF_PI, 0);
         wheels3.setMaterial(mat);
-        vehicle.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
+        vehicleControl.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
                 wheelDirection, wheelAxle, restLength, radius, false);
 
         Node node4 = new Node("wheel 4 node");
@@ -173,7 +181,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         node4.attachChild(wheels4);
         wheels4.rotate(0, FastMath.HALF_PI, 0);
         wheels4.setMaterial(mat);
-        vehicle.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
+        vehicleControl.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
                 wheelDirection, wheelAxle, restLength, radius, false);
 
         vehicleNode.attachChild(node1);
@@ -181,20 +189,20 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         vehicleNode.attachChild(node3);
         vehicleNode.attachChild(node4);
        
-        vehicleNode.scale( 10.0f, 1.0f, 1.0f );
+        vehicleNode.scale( 3.0f, 1.0f, 1.0f );
         rootNode.attachChild(vehicleNode);
 
-        getPhysicsSpace().add(vehicle);
+        getPhysicsSpace().add(vehicleControl);
     
     }
     
     
  
     private void setupKeys() {
-        inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_K));
-        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_U));
-        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_J));
+        inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addListener(this, "Lefts");
@@ -213,11 +221,46 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
  @Override
     public void simpleUpdate(float tpf) {
         //cam.lookAt(vehicle.getPhysicsLocation(), Vector3f.UNIT_Y);
+     
+        this.cam.setLocation( vehicleNode.localToWorld( new Vector3f( 0, 10 /* units above car*/, 10 /* units behind car*/ ), null));
+        this.cam.lookAt(this.vehicleNode.getWorldTranslation(), Vector3f.UNIT_Y);
     }
 
     @Override
-    public void onAction(String name, boolean isPressed, float tpf) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
+      public void onAction(String binding, boolean isPressed, float tpf) {
+        if (binding.equals("Lefts")) {
+            if (isPressed) {
+                steeringValue += .5f;
+            } else {
+                steeringValue += -.5f;
+            }
+            vehicleControl.steer(steeringValue);
+        } else if (binding.equals("Rights")) {
+            if (isPressed) {
+                steeringValue += -.5f;
+            } else {
+                steeringValue += .5f;
+            }
+            vehicleControl.steer(steeringValue);
+            
+        } else if (binding.equals("Ups")) {
+            if (isPressed) {
+                accelerationValue -= 800;
+            } else {
+                accelerationValue += 800;
+            }
+            vehicleControl.accelerate(accelerationValue);
+        } else if (binding.equals("Downs")) {
+            if (isPressed) {
+                vehicleControl.brake(40f);
+            } else {
+                vehicleControl.brake(0f);
+            }
+            
+
+        }
+    }
 }
+        
+
