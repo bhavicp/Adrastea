@@ -5,9 +5,12 @@ import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -33,6 +36,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private Material mat_terrain;
     private BulletAppState bulletAppState;
     private VehicleControl vehicle;
+     private RigidBodyControl landscape; //Terrian solid
         
     /**
      * @param args the command line arguments
@@ -77,12 +81,20 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         terrain.setMaterial(mat_terrain);
         terrain.setLocalTranslation(0, -100, 0);
         terrain.setLocalScale(2f, 1f, 2f);
-        rootNode.attachChild(terrain);
+        
 
         
         TerrainLodControl terrainControl = new TerrainLodControl(terrain, getCamera());
         terrain.addControl(terrainControl);
         
+        //We setup collision dection for the terrian
+        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
+        landscape = new RigidBodyControl(terrainShape,0);
+        terrain.addControl(landscape);
+        
+        bulletAppState.getPhysicsSpace().add(terrain);
+        rootNode.attachChild(terrain);
+          
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.0f));        
         rootNode.addLight(al);    
@@ -168,8 +180,8 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         vehicleNode.attachChild(node2);
         vehicleNode.attachChild(node3);
         vehicleNode.attachChild(node4);
-        rootNode.attachChild(vehicleNode);
        
+        vehicleNode.scale( 10.0f, 1.0f, 1.0f );
         rootNode.attachChild(vehicleNode);
 
         getPhysicsSpace().add(vehicle);
