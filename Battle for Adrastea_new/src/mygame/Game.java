@@ -6,8 +6,16 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
@@ -19,14 +27,22 @@ import com.jme3.util.SkyFactory;
  */
 public class Game extends SimpleApplication{
 
+    private BulletAppState bulletAppState;
+    private float wheelRadius;
+    private float steeringValue = 0;
+    private float accelerationValue = 0;
+    
     @Override
-    public void simpleInitApp() {       
+    public void simpleInitApp() {
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+        
         flyCam.setMoveSpeed(50);
         assetManager.registerLocator("./assets", FileLocator.class);
         setUpLighting();
         setUpWorldTerrain();    
         setUpTank();
-        
+        setupKeys();
         setUpHUD();        
     }
 
@@ -57,16 +73,33 @@ public class Game extends SimpleApplication{
     }
 
     private void setUpWorldTerrain() {
-        Spatial sceneModel = assetManager.loadModel("Scenes/WorldScene.j3o");
+        Node  sceneModel = (Node)assetManager.loadModel("Scenes/WorldScene.j3o");
         sceneModel.setLocalTranslation(0,0,0);
+        
+        //Collision
+        Spatial terrian =  sceneModel.getChild("terrain");       
+        PhysicsNode tb = new PhysicsNode(floorGeom, new MeshCollisionShape(floorGeom.getMesh()), 0);
+        tb.setLocalTranslation(new Vector3f(0f, -6, 0f));
         rootNode.attachChild(sceneModel);
     }
 
     private void setUpTank() {
-        Spatial tank = assetManager.loadModel("Models/HoverTank/tank.j3o");
+        float stiffness = 120.0f;//200=f1 car
+        float compValue = 0.2f; //(lower than damp!)
+        float dampValue = 0.3f;
+        final float mass = 400;
+        
+        
+        Node tank = (Node)assetManager.loadModel("Models/HoverTank/tank.j3o");
         tank.setLocalTranslation(0,0,0);
         tank.setLocalScale(1f);
+        
+        player = new PhysicsVehicleControl(carHull, mass);
+        
+        
+        
         rootNode.attachChild(tank);
+              
     }
     
     public static void main(String[] args){
@@ -87,4 +120,66 @@ public class Game extends SimpleApplication{
         game.setShowSettings(false);
         game.start();
     }
+    
+    private void setupKeys() {
+        inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
+        inputManager.addListener(this, "Lefts");
+        inputManager.addListener(this, "Rights");
+        inputManager.addListener(this, "Ups");
+        inputManager.addListener(this, "Downs");
+        inputManager.addListener(this, "Space");
+        inputManager.addListener(this, "Reset");
+    }
+    
+    private PhysicsSpace getPhysicsSpace() {
+        return bulletAppState.getPhysicsSpace();
+    }
+    
+    public void onAction(String binding, boolean value, float tpf) {
+        if (binding.equals("Lefts")) {
+            if (value) {
+                steeringValue += .5f;
+            } else {
+                steeringValue += -.5f;
+            }
+            player.steer(steeringValue);
+        } else if (binding.equals("Rights")) {
+            if (value) {
+                steeringValue += -.5f;
+            } else {
+                steeringValue += .5f;
+            }
+            player.steer(steeringValue);
+        } //note that our fancy car actually goes backwards..
+        else if (binding.equals("Ups")) {
+            if (value) {
+                accelerationValue -= 800;
+            } else {
+                accelerationValue += 800;
+            }
+            player.accelerate(accelerationValue);
+        } else if (binding.equals("Downs")) {
+            if (value) {
+                player.brake(40f);
+            } else {
+                player.brake(0f);
+            }
+        } else if (binding.equals("Reset")) {
+            if (value) {
+                System.out.println("Reset");
+                player.setPhysicsLocation(Vector3f.ZERO);
+                player.setPhysicsRotation(new Matrix3f());
+                player.setLinearVelocity(Vector3f.ZERO);
+                player.setAngularVelocity(Vector3f.ZERO);
+                player.resetSuspension();
+            } else {
+            }
+        }
+    }
+
 }
