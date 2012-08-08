@@ -25,17 +25,12 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
-import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.system.AppSettings;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
@@ -54,7 +49,7 @@ public class Games extends SimpleApplication implements ActionListener {
     private float steeringValue = 0;
     private float accelerationValue = 0;
     private VehicleControl player;
-    private Node tank;
+    private Spatial tank;
     private RigidBodyControl landscape;
     
     @Override
@@ -100,22 +95,22 @@ public class Games extends SimpleApplication implements ActionListener {
     }
 
     private void setUpWorldTerrain() {
-        Node  sceneModel = (Node)assetManager.loadModel("Scenes/WorldScene.j3o");
+        Spatial  sceneModel = assetManager.loadModel("Scenes/WorldScene.j3o");
         sceneModel.setLocalTranslation(0,0,0);
         
         //Collision
-        TerrainQuad terrain =  (TerrainQuad) sceneModel.getChild("terrain");       
+        Node sceneNode = (Node) sceneModel;
+        Spatial terrain =   sceneNode.getChild("terrain");       
         
         CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
         landscape = new RigidBodyControl(terrainShape,0);
         terrain.addControl(landscape);
         
         bulletAppState.getPhysicsSpace().add(terrain);
+        
         rootNode.attachChild(terrain);
         
-        
-        
-        //rootNode.attachChild(sceneModel);
+
     }
 
     private void setUpTank() {
@@ -125,21 +120,22 @@ public class Games extends SimpleApplication implements ActionListener {
         final float mass = 400;
         
         
-        tank = (Node)assetManager.loadModel("Models/HoverTank/tank.j3o");
-        tank.setLocalTranslation(0,10,0);
+        tank = assetManager.loadModel("Models/HoverTank/tank.j3o");
+        tank.setLocalTranslation(0,15,0);
         //tank.setLocalScale(1f);
         
-        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape(tank);
-        
-        player = new VehicleControl(tankHull, mass);  
+        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node) tank);
+        player = new VehicleControl(tankHull, mass);
+                 
         player.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
         player.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
         player.setSuspensionStiffness(stiffness);
         player.setMaxSuspensionForce(10000);
+        player.setPhysicsLocation(new Vector3f(0, 10, 0));
         
         
         rootNode.attachChild(tank);
-        getPhysicsSpace().add(player);
+        bulletAppState.getPhysicsSpace().add(player);
               
     }
     
@@ -165,7 +161,7 @@ public class Games extends SimpleApplication implements ActionListener {
     private void setupKeys() {
         inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_B));
         inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_RETURN));
