@@ -9,7 +9,6 @@ import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.KeyInput;
@@ -18,24 +17,15 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
-import com.jme3.util.SkyFactory;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.light.AmbientLight;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.scene.Geometry;
+import com.jme3.terrain.geomipmap.TerrainGrid;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
-import com.jme3.terrain.heightmap.AbstractHeightMap;
-import com.jme3.terrain.heightmap.ImageBasedHeightMap;
-import com.jme3.texture.Texture;
 
 
 /**
@@ -50,7 +40,8 @@ public class Games extends SimpleApplication implements ActionListener {
     private float accelerationValue = 0;
     private VehicleControl player;
     private Spatial tank;
-    private RigidBodyControl landscape;
+    private Spatial landscape;
+    private RigidBodyControl control;
     
     @Override
     public void simpleInitApp() {
@@ -95,47 +86,62 @@ public class Games extends SimpleApplication implements ActionListener {
     }
 
     private void setUpWorldTerrain() {
-        Spatial  sceneModel = assetManager.loadModel("Scenes/WorldScene.j3o");
-        sceneModel.setLocalTranslation(0,0,0);
         
-        //Collision
-        Node sceneNode = (Node) sceneModel;
-        Spatial terrain =   sceneNode.getChild("terrain");       
+        //This is the scene object
+        Node terrain = (Node)assetManager.loadModel("Scenes/WorldScene.j3o");
+        //This is the terrain object in the scene, its a child of the sceene
+        TerrainQuad terrrainObj = (TerrainQuad)terrain.getChild("terrain-WorldScene");
         
-        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
-        landscape = new RigidBodyControl(terrainShape,0);
-        terrain.addControl(landscape);
+        CollisionShape terrainShape = CollisionShapeFactory.createDynamicMeshShape(terrrainObj);
+        RigidBodyControl terrainlandscape = terrrainObj.getControl(RigidBodyControl.class);
         
-        bulletAppState.getPhysicsSpace().add(terrain);
+        terrain.addControl(terrainlandscape);     
+        
         
         rootNode.attachChild(terrain);
+        this.bulletAppState.getPhysicsSpace().add(terrain);
+        this.bulletAppState.getPhysicsSpace().add(terrrainObj);
         
-
+        
+////        landscape = assetManager.loadModel("Scenes/WorldScene.j3o");        
+//        landscape = assetManager.loadModel("Scenes/Terrain.j3o");        
+//        landscape.setLocalTranslation(0,0,0);
+//        
+//        
+//        
+//        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) landscape);
+//        RigidBodyControl lanSc = new RigidBodyControl(terrainShape, 0);
+//        landscape.addControl(lanSc);
+//        
+//        rootNode.attachChild(landscape);        
+//        bulletAppState.getPhysicsSpace().addAll(landscape);
+                    
     }
 
     private void setUpTank() {
-        float stiffness = 120.0f;//200=f1 car
-        float compValue = 0.2f; //(lower than damp!)
-        float dampValue = 0.3f;
-        final float mass = 400;
+//        float stiffness = 120.0f;//200=f1 car
+//        float compValue = 0.2f; //(lower than damp!)
+//        float dampValue = 0.3f;
+//        final float mass = 400;
         
         
         tank = assetManager.loadModel("Models/HoverTank/tank.j3o");
-        tank.setLocalTranslation(0,15,0);
+        tank.setLocalTranslation(0,0,0);
         //tank.setLocalScale(1f);
         
-        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node) tank);
-        player = new VehicleControl(tankHull, mass);
-                 
-        player.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
-        player.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
-        player.setSuspensionStiffness(stiffness);
-        player.setMaxSuspensionForce(10000);
-        player.setPhysicsLocation(new Vector3f(0, 10, 0));
+//        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node) tank);
+//        player = new VehicleControl(tankHull, mass);
+//                 
+//        player.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+//        player.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+//        player.setSuspensionStiffness(stiffness);
+//        player.setMaxSuspensionForce(10000);
+//        player.setPhysicsLocation(new Vector3f(0, 10, 0));
         
+         player = tank.getControl(VehicleControl.class);
         
         rootNode.attachChild(tank);
-        bulletAppState.getPhysicsSpace().add(player);
+        bulletAppState.getPhysicsSpace().addAll(tank);
               
     }
     
@@ -183,7 +189,7 @@ public class Games extends SimpleApplication implements ActionListener {
                 steeringValue += .5f;
             } else {
                 steeringValue += -.5f;
-            }
+            }            
             player.steer(steeringValue);
         } else if (binding.equals("Rights")) {
             if (value) {
