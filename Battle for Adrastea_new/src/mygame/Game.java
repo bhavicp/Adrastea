@@ -29,7 +29,7 @@ import com.jme3.terrain.geomipmap.TerrainQuad;
  *
  * @author Shane
  */
-public class Games extends SimpleApplication implements ActionListener {
+public class Game extends SimpleApplication implements ActionListener {
 
     private BulletAppState bulletAppState;
     private float wheelRadius;
@@ -155,7 +155,7 @@ public class Games extends SimpleApplication implements ActionListener {
         gameSettings.setSamples(0);
         gameSettings.setRenderer("LWJGL-OpenGL2");
         
-        Games games = new Games();
+        Game games = new Game();
         games.setSettings(gameSettings);
         games.setShowSettings(false);
         games.start();
