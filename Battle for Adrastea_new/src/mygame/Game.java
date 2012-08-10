@@ -8,9 +8,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.KeyInput;
@@ -49,6 +47,7 @@ public class Game extends SimpleApplication implements ActionListener {
     
     @Override
     public void simpleInitApp() {
+        
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         //Debugging
@@ -56,7 +55,7 @@ public class Game extends SimpleApplication implements ActionListener {
         
         flyCam.setMoveSpeed(50);
         assetManager.registerLocator("./assets", FileLocator.class);
-        setUpLighting();
+        
         setUpWorldTerrain();    
         setUpTank();
         setupKeys();
@@ -83,142 +82,51 @@ public class Game extends SimpleApplication implements ActionListener {
         
     }
 
-    private void setUpLighting() {
-        DirectionalLight directionalLight = new DirectionalLight();
-        directionalLight.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
-        rootNode.addLight(directionalLight);
-    }
-
     private void setUpWorldTerrain() {
         
         //This is the scene object
-//        landscape = (Node)assetManager.loadModel("Scenes/Terrain.j3o");
-//        
-//        TerrainQuad terrain = (TerrainQuad) landscape.getChild("terrain-Terrain");
-        landscape = (Node)assetManager.loadModel("Scenes/WorldScene.j3o");
+        landscape = (Node)assetManager.loadModel("Scenes/Terrain.j3o");
         
-        TerrainQuad terrain = (TerrainQuad) landscape.getChild("terrain-WorldScene");
-   
+        TerrainQuad terrain = (TerrainQuad) landscape.getChild("terrain-Terrain");
+                   
         CollisionShape collisionTerrainShape = CollisionShapeFactory.createMeshShape(terrain);
         
         RigidBodyControl terrainlandscape = new RigidBodyControl(collisionTerrainShape,0.0f);
         
-        landscape.addControl(terrainlandscape);            
+        terrainlandscape.setCollisionGroup(1);
+        terrainlandscape.setCollideWithGroups(1);
+        
+        landscape.addControl(terrainlandscape);
         rootNode.attachChild(landscape);
-        this.bulletAppState.getPhysicsSpace().addAll(landscape);
-        
-        
-////        landscape = assetManager.loadModel("Scenes/WorldScene.j3o");        
-//        landscape = assetManager.loadModel("Scenes/Terrain.j3o");        
-//        landscape.setLocalTranslation(0,0,0);
-//        
-//        
-//        
-//        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) landscape);
-//        RigidBodyControl lanSc = new RigidBodyControl(terrainShape, 0);
-//        landscape.addControl(lanSc);
-//        
-//        rootNode.attachChild(landscape);        
-//        bulletAppState.getPhysicsSpace().addAll(landscape);
-                    
+        getPhysicsSpace().addAll(landscape);
     }
 
     private void setUpTank() {
-
-        final float mass = 400;       
-        
+       
         tank = assetManager.loadModel("Models/Tank/HoverTank.j3o");
 
         
-        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node) tank);
-        player = new VehicleControl(tankHull, mass);        
-     
-       
+        CollisionShape tankHull = CollisionShapeFactory.createMeshShape((Node)tank);
         
-               
+        player = new VehicleControl(tankHull, 400);
+ 
+        
+        float stiffness = 60.0f;//200=f1 car
+        float compValue = .3f; //(should be lower than damp)
+        float dampValue = .4f;
+        player.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+        player.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+        player.setSuspensionStiffness(stiffness);
+        player.setMaxSuspensionForce(10000.0f);
+        player.setPhysicsLocation(new Vector3f(0, 2, 0));
+ 
+        player.setCollideWithGroups(1);
+        player.setCollisionGroup(1);
+        
         tank.addControl(player);
-        rootNode.attachChild(tank);        
-        bulletAppState.getPhysicsSpace().addAll(tank);
-
+        rootNode.attachChild(tank);
+        getPhysicsSpace().add(player); 
         
-        
-//        Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-//        mat.getAdditionalRenderState().setWireframe(true);
-//        mat.setColor("Color", ColorRGBA.Red);
-// 
-//        //create a compound shape and attach the BoxCollisionShape for the car body at 0,1,0
-//        //this shifts the effective center of mass of the BoxCollisionShape to 0,-1,0
-//        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
-//        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f));
-//        compoundShape.addChildShape(box, new Vector3f(0, 1, 0));
-// 
-//        //create vehicle node
-//        Node vehicleNode=new Node("vehicleNode");
-//        player = new VehicleControl(compoundShape, 400);
-//        vehicleNode.addControl(player);
-// 
-//        //setting suspension values for wheels, this can be a bit tricky
-//        //see also https://docs.google.com/Doc?docid=0AXVUZ5xw6XpKZGNuZG56a3FfMzU0Z2NyZnF4Zmo&hl=en
-//        float stiffness = 60.0f;//200=f1 car
-//        float compValue = .3f; //(should be lower than damp)
-//        float dampValue = .4f;
-//        player.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
-//        player.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
-//        player.setSuspensionStiffness(stiffness);
-//        player.setMaxSuspensionForce(10000.0f);
-// 
-//        //Create four wheels and add them at their locations
-//        Vector3f wheelDirection = new Vector3f(0, -1, 0); // was 0, -1, 0
-//        Vector3f wheelAxle = new Vector3f(-1, 0, 0); // was -1, 0, 0
-//        float radius = 0.5f;
-//        float restLength = 0.3f;
-//        float yOff = 0.5f;
-//        float xOff = 1f;
-//        float zOff = 2f;
-// 
-//        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
-// 
-//        Node node1 = new Node("wheel 1 node");
-//        Geometry wheels1 = new Geometry("wheel 1", wheelMesh);
-//        node1.attachChild(wheels1);
-//        wheels1.rotate(0, FastMath.HALF_PI, 0);
-//        wheels1.setMaterial(mat);
-//        player.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
-//                wheelDirection, wheelAxle, restLength, radius, true);
-// 
-//        Node node2 = new Node("wheel 2 node");
-//        Geometry wheels2 = new Geometry("wheel 2", wheelMesh);
-//        node2.attachChild(wheels2);
-//        wheels2.rotate(0, FastMath.HALF_PI, 0);
-//        wheels2.setMaterial(mat);
-//        player.addWheel(node2, new Vector3f(xOff, yOff, zOff),
-//                wheelDirection, wheelAxle, restLength, radius, true);
-// 
-//        Node node3 = new Node("wheel 3 node");
-//        Geometry wheels3 = new Geometry("wheel 3", wheelMesh);
-//        node3.attachChild(wheels3);
-//        wheels3.rotate(0, FastMath.HALF_PI, 0);
-//        wheels3.setMaterial(mat);
-//        player.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
-//                wheelDirection, wheelAxle, restLength, radius, false);
-// 
-//        Node node4 = new Node("wheel 4 node");
-//        Geometry wheels4 = new Geometry("wheel 4", wheelMesh);
-//        node4.attachChild(wheels4);
-//        wheels4.rotate(0, FastMath.HALF_PI, 0);
-//        wheels4.setMaterial(mat);
-//        player.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
-//                wheelDirection, wheelAxle, restLength, radius, false);
-// 
-//        vehicleNode.attachChild(node1);
-//        vehicleNode.attachChild(node2);
-//        vehicleNode.attachChild(node3);
-//        vehicleNode.attachChild(node4);
-//        rootNode.attachChild(vehicleNode);
-// 
-//        getPhysicsSpace().add(player);
-        
-              
     }
     
     public static void main(String[] args){
@@ -230,9 +138,9 @@ public class Game extends SimpleApplication implements ActionListener {
         gameSettings.setVSync(true);
         gameSettings.setTitle("Game");
         gameSettings.setUseInput(true);
-        gameSettings.setFrameRate(500);
-        gameSettings.setSamples(0);
-        gameSettings.setRenderer("LWJGL-OpenGL2");
+        //wwqgameSettings.setFrameRate(500);
+        //gameSettings.setSamples(0);
+        //gameSettings.setRenderer("LWJGL-OpenGL2");
         
         Game games = new Game();
         games.setSettings(gameSettings);
