@@ -10,6 +10,9 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -26,19 +29,43 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
 
 
-public class BattleForAdrastea extends SimpleApplication{
-    private Node model;
+public class BattleForAdrastea extends SimpleApplication implements ActionListener {
     private Node tank;
     private BulletAppState bulletAppState;
     private VehicleControl vehicleControl;
-    private Node landscape;
+    
+    private boolean left = false, right = false, up = false, down = false;
+    private float wheelRadius;
+    private float steeringValue = 0;
+    private float accelerationValue = 0;
       
+    public static void main(String[] args){
+        AppSettings gameSettings = new AppSettings(true);
+        //gameSettings.setResolution(1920, 1080);
+        gameSettings.setResolution(800, 600);
+        gameSettings.setFullscreen(false);
+        gameSettings.setVSync(true);
+        gameSettings.setTitle("Game");
+        gameSettings.setUseInput(true);
+        gameSettings.setFrameRate(500);
+        gameSettings.setSamples(0);
+        gameSettings.setRenderer("LWJGL-OpenGL2");
+        
+        BattleForAdrastea games = new BattleForAdrastea();
+        games.setSettings(gameSettings);
+        games.setShowSettings(false);
+        games.start();
+    }
+    
     @Override
     public void simpleInitApp() {
         flyCam.setMoveSpeed(50);
+        cam.setFrustumFar(150f);
         
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
+        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0f,-10f,0f));
         
         setDisplayFps(false);
         setDisplayStatView(false);
@@ -47,20 +74,12 @@ public class BattleForAdrastea extends SimpleApplication{
         setUpLighting();
         setUpTerrain();
         setUpTank();
-        
+        setUpKeys();
         setUpHUD(); 
     }
     
 
     private void setUpTerrain() {
-       
-        
-        
-        
-        
-        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-        
-        
         
         Material floor_mat = new Material(assetManager, "Common/MatDefs/Misc/ColoredTextured.j3md");
         TextureKey key3 = new TextureKey("Textures/dirt.jpg");
@@ -88,12 +107,10 @@ public class BattleForAdrastea extends SimpleApplication{
     private void setUpTank() {
        
         tank = (Node) assetManager.loadModel("Models/Tank/HoverTank.blend");
-
-        
         CollisionShape tankHull = CollisionShapeFactory.createMeshShape((Node)tank);
         
         vehicleControl = new VehicleControl(tankHull, 400);
- 
+        tank.addControl(vehicleControl);
         
         float stiffness = 60.0f;//200=f1 car
         float compValue = .3f; //(should be lower than damp)
@@ -106,33 +123,16 @@ public class BattleForAdrastea extends SimpleApplication{
         vehicleControl.setCollideWithGroups(1);
         vehicleControl.setCollisionGroup(1);
         
-        tank.addControl(vehicleControl);
+        
+        
         rootNode.attachChild(tank);
         getPhysicsSpace().add(vehicleControl); 
-    
-    }
-    
-    public static void main(String[] args){
-        AppSettings gameSettings = new AppSettings(true);
-        //gameSettings.setResolution(1920, 1080);
-        gameSettings.setResolution(800, 600);
-        gameSettings.setFullscreen(false);
-        gameSettings.setVSync(true);
-        gameSettings.setTitle("Game");
-        gameSettings.setUseInput(true);
-        gameSettings.setFrameRate(500);
-        gameSettings.setSamples(0);
-        gameSettings.setRenderer("LWJGL-OpenGL2");
+        vehicleControl.accelerate(11500);
         
-        BattleForAdrastea games = new BattleForAdrastea();
-        games.setSettings(gameSettings);
-        games.setShowSettings(false);
-        games.start();
+    
     }
-
-    private PhysicsSpace getPhysicsSpace() {
-        return bulletAppState.getPhysicsSpace();
-    }
+    
+   
 
     private void setUpHUD() {
         setDisplayStatView(false);
@@ -158,4 +158,58 @@ public class BattleForAdrastea extends SimpleApplication{
         dl.setDirection(new Vector3f(-0.1f, -1f, -1));
         rootNode.addLight(dl);
     }
+    
+    private PhysicsSpace getPhysicsSpace() {
+        return bulletAppState.getPhysicsSpace();
+    }
+    
+     private void setUpKeys() {
+    inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_T));
+    inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_H));
+    inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_F));
+    inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_G));
+    inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "Left");
+    inputManager.addListener(this, "Right");
+    inputManager.addListener(this, "Up");
+    inputManager.addListener(this, "Down");
+    inputManager.addListener(this, "Jump");
+  }
+
+    @Override
+    public void onAction(String binding, boolean value, float tpf) {
+        
+       if (binding.equals("Left")) {
+            if (value) {
+                steeringValue += .5f;
+            } else {
+                steeringValue += -.5f;
+            }
+            vehicleControl.steer(steeringValue);
+        } else if (binding.equals("Right")) {
+            if (value) {
+                steeringValue += -.5f;
+            } else {
+                steeringValue += .5f;
+            }
+            vehicleControl.steer(steeringValue);
+        } //Backups
+        else if (binding.equals("Up")) {
+            if (value) {
+                System.out.println("TEST YES");
+                accelerationValue -= 800;
+            } else {
+                accelerationValue += 800;
+            }
+            vehicleControl.accelerate(accelerationValue);
+            //vehicleControl.setCollisionShape(CollisionShapeFactory.createDynamicMeshShape(tank));
+        } else if (binding.equals("Down")) {
+            if (value) {
+                vehicleControl.brake(40f);
+            } else {
+                vehicleControl.brake(0f);
+            }
+        }
+    }
 }
+
