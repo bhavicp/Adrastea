@@ -9,6 +9,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -22,8 +23,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Cylinder;
 import com.jme3.system.AppSettings;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
@@ -34,10 +35,14 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private BulletAppState bulletAppState;
     private VehicleControl vehicleControl;
     
-    private boolean left = false, right = false, up = false, down = false;
     private float wheelRadius;
     private float steeringValue = 0;
     private float accelerationValue = 0;
+    private BoundingBox box;
+    private VehicleWheel fr, fl, br, bl;
+    private Node node_fr, node_fl, node_br, node_bl;
+    private float radius = 0.5f;
+
       
     public static void main(String[] args){
         AppSettings gameSettings = new AppSettings(true);
@@ -56,6 +61,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         games.setShowSettings(false);
         games.start();
     }
+    
     
     @Override
     public void simpleInitApp() {
@@ -106,32 +112,101 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
 
     private void setUpTank() {
        
+        
         tank = (Node) assetManager.loadModel("Models/Tank/HoverTank.blend");
-        CollisionShape tankHull = CollisionShapeFactory.createMeshShape((Node)tank);
+        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node)tank);
         
         vehicleControl = new VehicleControl(tankHull, 400);
         tank.addControl(vehicleControl);
         
-        float stiffness = 60.0f;//200=f1 car
-        float compValue = .3f; //(should be lower than damp)
-        float dampValue = .4f;
-        vehicleControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicleControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
-        vehicleControl.setSuspensionStiffness(stiffness);
-        vehicleControl.setMaxSuspensionForce(10000.0f);
     
         vehicleControl.setCollideWithGroups(1);
         vehicleControl.setCollisionGroup(1);
         
         
-        
+        setUpWheels();
         rootNode.attachChild(tank);
         getPhysicsSpace().add(vehicleControl); 
-        vehicleControl.accelerate(11500);
+        
+        vehicleControl.setPhysicsLocation(new Vector3f(0,10,0));
+        //vehicleControl.accelerate(500f);
+        
+        
         
     
     }
     
+    private void setUpWheels() {
+        float stiffness = 120.0f;//200=f1 car
+        float compValue = 0.2f; //(lower than damp!)
+        float dampValue = 0.3f;
+        
+        //Create four wheels and add them at their locations
+        Vector3f wheelDirection = new Vector3f(0, -1, 0); // was 0, -1, 0
+        Vector3f wheelAxle = new Vector3f(-1, 0, 0); // was -1, 0, 0
+
+        float restLength = 0.3f;
+        float yOff = -1.5f;
+        float xOff = 2f;
+        float zOff = 3f;
+
+        
+        //Setting default values for wheels
+        vehicleControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicleControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicleControl.setSuspensionStiffness(stiffness);
+        vehicleControl.setMaxSuspensionForce(10000);
+
+        //Create four wheels and add them at their locations
+
+        //Mat for testing
+        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
+        Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.getAdditionalRenderState().setWireframe(true);
+        mat.setColor("Color", ColorRGBA.Red);
+     
+
+        Node node1 = new Node("wheel 1 node");
+        Geometry wheels1 = new Geometry("wheel 1", wheelMesh);
+        node1.attachChild(wheels1);
+        wheels1.rotate(0, FastMath.HALF_PI, 0);
+        wheels1.setMaterial(mat);
+        vehicleControl.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
+                wheelDirection, wheelAxle, restLength, radius, true);
+
+        Node node2 = new Node("wheel 2 node");
+        Geometry wheels2 = new Geometry("wheel 2", wheelMesh);
+        node2.attachChild(wheels2);
+        wheels2.rotate(0, FastMath.HALF_PI, 0);
+        wheels2.setMaterial(mat);
+        vehicleControl.addWheel(node2, new Vector3f(xOff, yOff, zOff),
+                wheelDirection, wheelAxle, restLength, radius, true);
+
+        Node node3 = new Node("wheel 3 node");
+        Geometry wheels3 = new Geometry("wheel 3", wheelMesh);
+        node3.attachChild(wheels3);
+        wheels3.rotate(0, FastMath.HALF_PI, 0);
+        wheels3.setMaterial(mat);
+        vehicleControl.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
+                wheelDirection, wheelAxle, restLength, radius, false);
+
+        Node node4 = new Node("wheel 4 node");
+        Geometry wheels4 = new Geometry("wheel 4", wheelMesh);
+        node4.attachChild(wheels4);
+        wheels4.rotate(0, FastMath.HALF_PI, 0);
+        wheels4.setMaterial(mat);
+        vehicleControl.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
+                wheelDirection, wheelAxle, restLength, radius, false);
+
+        tank.attachChild(node1);
+        tank.attachChild(node2);
+        tank.attachChild(node3);
+        tank.attachChild(node4);
+        
+        vehicleControl.getWheel(2).setFrictionSlip(4);
+        vehicleControl.getWheel(3).setFrictionSlip(4);
+        
+    }
    
 
     private void setUpHUD() {
@@ -164,9 +239,9 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     }
     
      private void setUpKeys() {
-    inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_T));
+    inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_F));
     inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_H));
-    inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_F));
+    inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_T));
     inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addListener(this, "Left");
@@ -196,10 +271,9 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         } //Backups
         else if (binding.equals("Up")) {
             if (value) {
-                System.out.println("TEST YES");
-                accelerationValue -= 800;
-            } else {
                 accelerationValue += 800;
+            } else {
+                accelerationValue -= 800;
             }
             vehicleControl.accelerate(accelerationValue);
             //vehicleControl.setCollisionShape(CollisionShapeFactory.createDynamicMeshShape(tank));
