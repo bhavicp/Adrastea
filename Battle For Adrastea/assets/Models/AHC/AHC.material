@@ -1,0 +1,857 @@
+material <Concrete>5
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete.jpg
+         }
+      }
+   }
+}
+
+material <Black>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.0 0.0 0.0 1.0
+         ambient 0.0 0.0 0.0 1.0
+      }
+   }
+}
+
+material <Blue>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.0 0.0 1.0 1.0
+         ambient 0.0 0.0 1.0 1.0
+      }
+   }
+}
+
+material <WhiteSmoke>1
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+         depth_check on
+         depth_write off
+         diffuse 0.498039215686275 0.498039215686275 0.498039215686275 0.94
+         ambient 0.498039215686275 0.498039215686275 0.498039215686275 0.94
+      }
+   }
+}
+
+material <Paver_Hex>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture CeramicPaver-Hex01.jpg
+         }
+      }
+   }
+}
+
+material Material4
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture shiphull.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>4
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>4_distort_1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete1.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>4_distort_2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete2.jpg
+         }
+      }
+   }
+}
+
+material <SlateGray>1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.290196078431373 0.286274509803922 0.337254901960784 1.0
+         ambient 0.290196078431373 0.286274509803922 0.337254901960784 1.0
+      }
+   }
+}
+
+material Material3
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture rough-panels2.jpg
+         }
+      }
+   }
+}
+
+material Material2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture shiphull_copy.jpg
+         }
+      }
+   }
+}
+
+material Metal_Panel
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture metal-panel.jpg
+         }
+      }
+   }
+}
+
+material <CorrogateShiny>1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture CorrogateShiny.jpg
+         }
+      }
+   }
+}
+
+material Material1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture B.jpg
+         }
+      }
+   }
+}
+
+material <Charcoal>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.137254901960784 0.137254901960784 0.137254901960784 1.0
+         ambient 0.137254901960784 0.137254901960784 0.137254901960784 1.0
+      }
+   }
+}
+
+material <Terrazzo>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Terrazzo.jpg
+         }
+      }
+   }
+}
+
+material <Red>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1.0 0.0 0.0 1.0
+         ambient 1.0 0.0 0.0 1.0
+      }
+   }
+}
+
+material <DimGray>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.411764705882353 0.411764705882353 0.411764705882353 1.0
+         ambient 0.411764705882353 0.411764705882353 0.411764705882353 1.0
+      }
+   }
+}
+
+material <CorrogateShiny>2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture CorrogateShiny.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete1.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete2.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_3
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete3.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_4
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete4.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_5
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete5.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_6
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete6.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>1_distort_7
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete7.jpg
+         }
+      }
+   }
+}
+
+material <DarkGray>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.317647058823529 0.317647058823529 0.317647058823529 1.0
+         ambient 0.317647058823529 0.317647058823529 0.317647058823529 1.0
+      }
+   }
+}
+
+material <LightSlateGray>
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.466666666666667 0.533333333333333 0.6 1.0
+         ambient 0.466666666666667 0.533333333333333 0.6 1.0
+      }
+   }
+}
+
+material <Concrete>2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_1
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete1.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_2
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete2.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_3
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete3.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_4
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete4.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_5
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete5.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_6
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete6.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_7
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete7.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_8
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete8.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_9
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete9.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_10
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete10.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_11
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete11.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_12
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete12.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_13
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete13.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_14
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete14.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_15
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete15.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_16
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete16.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_17
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete17.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_18
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete18.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_19
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete19.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_20
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete20.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_21
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete21.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_22
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete22.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_23
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete23.jpg
+         }
+      }
+   }
+}
+
+material <Concrete>2_distort_24
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture Concrete24.jpg
+         }
+      }
+   }
+}
+
+material <Glass_Sky_Reflection>
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+         depth_check on
+         depth_write off
+         diffuse 1 1 1 0.52
+         texture_unit
+         {
+            texture Glass-Sky.jpg
+         }
+      }
+   }
+}
+
+material Material6
+{
+   technique
+   {
+      pass
+      {
+         diffuse 1 1 1 1.0
+         texture_unit
+         {
+            texture shiphull_copy.jpg
+         }
+      }
+   }
+}
+
+material SketchupDefault
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.882352941176471 0.882352941176471 0.784313725490196
+         ambient 0.882352941176471 0.882352941176471 0.784313725490196
+      }
+   }
+}
+
+material SketchupDefault_Back
+{
+   technique
+   {
+      pass
+      {
+         diffuse 0.501960784313725 0.501960784313725 0.784313725490196
+         ambient 0.501960784313725 0.501960784313725 0.784313725490196
+      }
+   }
+}
