@@ -136,6 +136,9 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     
     }
     
+    /**
+     * This adds wheels to the vehicle.
+     */
     private void setUpWheels() {
         float stiffness = 120.0f;//200=f1 car
         float compValue = 0.2f; //(lower than damp!)
@@ -228,6 +231,9 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         guiNode.attachChild(bulletPicture);
     }
 
+    /**
+     * 
+     */
     private void setUpLighting() {
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(-0.1f, -1f, -1));
@@ -238,6 +244,9 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         return bulletAppState.getPhysicsSpace();
     }
     
+    /**
+     * Setup mappings for keys
+     */
      private void setUpKeys() {
     inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_F));
     inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_H));
