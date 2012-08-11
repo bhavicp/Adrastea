@@ -11,7 +11,7 @@
                    imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15"/>
         </image>
     </controlDefinition>
-        
+            
     <screen id="start" controller = "Controllers.GUI">
         <layer id="layer" childLayout="center">
             <panel id = "panel2" height="30%" width="50%" align="center" valign="center" childLayout="vertical"
@@ -35,18 +35,27 @@
     
     <screen id="hud" controller="Controllers.GUI">
         <layer id="foreground" childLayout="horizontal" >
-            <panel id="panel_top_right" height="78px" width="50%" align="center" childLayout="center" backgroundColor="#00f8">  
-                <image filename="Textures/MissileDisplay.png" childLayout="absolute" />
+            <panel id="panel_top_left" height="78px" width="178px" align="center" childLayout="center" >  
+                <image filename="Textures/MissileDisplay.png" childLayout="absolute">
+                   
+                    <control id="missiletext" name="label" align="center" y="30" x="80"
+                          text="1000" color="#000F" />
+                          
+                </image>
             </panel>
-            <panel id="panel_top_left" height="78px" width="50%" align="center" childLayout="center" backgroundColor="#f00c">  
-                
+            <panel id="panel_top_middle" height="78px"/>  
+            <panel id="panel_top_right" height="78px" width="178px" align="center" childLayout="center" >
+                <image filename="Textures/BulletDisplay.png" childLayout="absolute" >
+                    <control id="bullettext" name="label" align="left" y="30" x="70"
+                          text="1000" color="#000F" />
+                </image>
             </panel>   
-        </layer>        
+        </layer>    
     </screen>
     
     
     <screen id="end" controller = "Controllers.GUI">
         <layer id="end"></layer>
-    </screen>  
+    </screen>   
   
 </nifty>
