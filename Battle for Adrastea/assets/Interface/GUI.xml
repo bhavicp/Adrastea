@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+
     <useStyles filename="nifty-default-styles.xml" />
     <useControls filename="nifty-default-controls.xml" />
+
     
-    <controlDefinition name = "loadingbar" controller = "controllers.GUI">
+    <controlDefinition name = "loadingbar" controller = "Controllers.GUI">
         <image filename="Textures/border.png" childLayout="absolute" 
                imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15">
             <image id="progressbar" x="0" y="0" filename="Textures/inner.png" width="32px" height="100%"
@@ -11,8 +13,7 @@
         </image>
     </controlDefinition>
         
-    
-    <screen id="start" controller = "controllers.GUI">
+    <screen id="start" controller = "Controllers.GUI">
         <layer id="layer" childLayout="center">
             <panel id = "panel2" height="30%" width="50%" align="center" valign="center" childLayout="vertical"
                    visibleToMouse="true">
@@ -23,8 +24,8 @@
         </layer>
     </screen>
     
-   <screen id="loadlevel" controller = "controllers.GUI">
-        <layer id="loadinglayer" childLayout="center" backgroundColor="#000000">
+    <screen id="loadlevel" controller = "Controllers.GUI">
+        <layer id="loadinglayer" childLayout="center" backgroundColor="#0000">
             <panel id = "loadingpanel" childLayout="vertical" align="center" valign="center" height="32px" width="400px">
                 <control name="loadingbar" align="center" valign="center" width="400px" height="32px" />
                 <control id="loadingtext" name="label" align="center"
@@ -33,20 +34,19 @@
         </layer>
     </screen>
     
-    <screen id="hud" controller = "controllers.GUI">
-        <layer id="misilecounter" >
-            <panel id="panel_top_right" height="25%" width="75%" align="center" childLayout="center"
-                    backgroundColor="#f008">  
-            </panel>
+    <screen id="hud" controller="Controllers.GUI">
+        <layer id="panel_top_right" height="78px" width="50%" align="center" childLayout="center">
+            
         </layer>
-        <layer id="bulletcounter" >
-            <panel id="panel_top_left" height="25%" width="75%" align="center" childLayout="center"
-                    backgroundColor="#f008">  
-            </panel>
+        <layer id="panel_top_left" height="78px" width="50%" align="center" childLayout="center" backgroundColor="#f045">
+            
         </layer>
+        
     </screen>
     
+    
     <screen id="end" controller = "controllers.GUI">
-    </screen>
+        <layer id="end"></layer>
+    </screen>   
     
 </nifty>

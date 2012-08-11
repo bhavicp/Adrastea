@@ -1,23 +1,23 @@
 /*
  * Got the tutorial from http://www.jmonkeyengine.org/wiki/doku.php/jme3:advanced:loading_screen
  */
-package controllers;
+package Controllers;
 
 
-import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.FileLocator;
-import com.jme3.material.Material;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import com.jme3.system.AppSettings;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.Controller;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import com.jme3.app.SimpleApplication;
+import com.jme3.asset.plugins.FileLocator;
+import com.jme3.material.Material;
+import com.jme3.system.AppSettings;
+import com.jme3.terrain.geomipmap.TerrainQuad;
+import de.lessvoid.nifty.controls.Controller;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.xml.xpp3.Attributes;
 import java.util.Properties;
 import java.util.concurrent.Callable;
