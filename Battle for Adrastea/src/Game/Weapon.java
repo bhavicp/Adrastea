@@ -20,10 +20,11 @@ import com.jme3.scene.Spatial;
  *
  * @author bhavicp
  */
-public class Weapons {
+public class Weapon {
     private AssetManager assetManager;
+    Spatial missile;
     
-    public Weapons(AssetManager assestManager) {
+    public Weapon(AssetManager assestManager) {
         this.assetManager = assestManager;
         
     }
@@ -36,7 +37,7 @@ public class Weapons {
         Quaternion rot = tank.getWorldRotation();
         Vector3f dir = rot.getRotationColumn(2);
 
-        Spatial missile = assetManager.loadModel("Models/SpaceCraft/Rocket.mesh.xml");
+         missile = assetManager.loadModel("Models/SpaceCraft/Rocket.mesh.xml");
         missile.scale(0.5f);
         missile.rotate(0, FastMath.PI, 0);
         missile.updateGeometricState();
@@ -59,6 +60,9 @@ public class Weapons {
 
         //rootNode.attachChild(missile);
         //getPhysicsSpace().add(missile);
+    }
+    public Spatial getMissile() {
+        return this.missile;
     }
     
 }
