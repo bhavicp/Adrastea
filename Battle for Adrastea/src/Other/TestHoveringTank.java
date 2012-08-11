@@ -70,6 +70,8 @@ import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.List;
 import Controllers.PhysicsHoverControl;
+import Game.Terrain;
+import com.jme3.asset.plugins.FileLocator;
 
 public class TestHoveringTank extends SimpleApplication implements AnalogListener,
         ActionListener {
@@ -77,7 +79,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
     private BulletAppState bulletAppState;
     private PhysicsHoverControl hoverControl;
     private Spatial spaceCraft;
-    TerrainQuad terrain;
+    Terrain terrain;
     Material matRock;
     boolean wireframe = false;
     protected BitmapText hintText;
@@ -121,7 +123,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
         stateManager.attach(bulletAppState);
 //        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         bulletAppState.getPhysicsSpace().setAccuracy(1f/30f);
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        //rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
         PssmShadowRenderer pssmr = new PssmShadowRenderer(assetManager, 2048, 3);
         pssmr.setDirection(new Vector3f(-0.5f, -0.3f, -0.3f).normalizeLocal());
@@ -149,7 +151,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
 
     private void buildPlayer() {
         
-        spaceCraft = assetManager.loadModel("Models/HoverTank/Tank2.mesh.xml");
+        spaceCraft = assetManager.loadModel("Models/HoverTank/tank.mesh.xml");
         CollisionShape colShape = CollisionShapeFactory.createDynamicMeshShape(spaceCraft);
         spaceCraft.setShadowMode(ShadowMode.CastAndReceive);
         spaceCraft.setLocalTranslation(new Vector3f(-140, 14, -23));
@@ -170,35 +172,35 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
         flyCam.setEnabled(false);
     }
 
-    public void makeMissile() {
-        Vector3f pos = spaceCraft.getWorldTranslation().clone();
-        Quaternion rot = spaceCraft.getWorldRotation();
-        Vector3f dir = rot.getRotationColumn(2);
-
-        Spatial missile = assetManager.loadModel("Models/SpaceCraft/Rocket.mesh.xml");
-        missile.scale(0.5f);
-        missile.rotate(0, FastMath.PI, 0);
-        missile.updateGeometricState();
-
-        BoundingBox box = (BoundingBox) missile.getWorldBound();
-        final Vector3f extent = box.getExtent(null);
-
-        BoxCollisionShape boxShape = new BoxCollisionShape(extent);
-
-        missile.setName("Missile");
-        missile.rotate(rot);
-        missile.setLocalTranslation(pos.addLocal(0, extent.y * 4.5f, 0));
-        missile.setLocalRotation(hoverControl.getPhysicsRotation());
-        missile.setShadowMode(ShadowMode.Cast);
-        RigidBodyControl control = new BombControl(assetManager, boxShape, 20);
-        control.setLinearVelocity(dir.mult(100));
-        control.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
-        missile.addControl(control);
-
-
-        rootNode.attachChild(missile);
-        getPhysicsSpace().add(missile);
-    }
+//    public void makeMissile() {
+//        Vector3f pos = spaceCraft.getWorldTranslation().clone();
+//        Quaternion rot = spaceCraft.getWorldRotation();
+//        Vector3f dir = rot.getRotationColumn(2);
+//
+//        Spatial missile = assetManager.loadModel("Models/SpaceCraft/Rocket.mesh.xml");
+//        missile.scale(0.5f);
+//        missile.rotate(0, FastMath.PI, 0);
+//        missile.updateGeometricState();
+//
+//        BoundingBox box = (BoundingBox) missile.getWorldBound();
+//        final Vector3f extent = box.getExtent(null);
+//
+//        BoxCollisionShape boxShape = new BoxCollisionShape(extent);
+//
+//        missile.setName("Missile");
+//        missile.rotate(rot);
+//        missile.setLocalTranslation(pos.addLocal(0, extent.y * 4.5f, 0));
+//        missile.setLocalRotation(hoverControl.getPhysicsRotation());
+//        missile.setShadowMode(ShadowMode.Cast);
+//        RigidBodyControl control = new BombControl(assetManager, boxShape, 20);
+//        control.setLinearVelocity(dir.mult(100));
+//        control.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
+//        missile.addControl(control);
+//
+//
+//        rootNode.attachChild(missile);
+//        getPhysicsSpace().add(missile);
+//    }
 
     public void onAnalog(String binding, float value, float tpf) {
     }
@@ -222,7 +224,7 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
             }
         } else if (binding.equals("Space") && value) {
             
-            makeMissile();
+            //makeMissile();
         }
     }
     
@@ -260,53 +262,10 @@ public class TestHoveringTank extends SimpleApplication implements AnalogListene
     }
 
     private void createTerrain() {
-        matRock = new Material(assetManager, "Common/MatDefs/Terrain/TerrainLighting.j3md");
-        matRock.setBoolean("useTriPlanarMapping", false);
-        matRock.setBoolean("WardIso", true);
-        matRock.setTexture("AlphaMap", assetManager.loadTexture("Textures/Terrain/splat/alphamap.png"));
-        Texture heightMapImage = assetManager.loadTexture("Textures/Terrain/splat/mountains512.png");
-        Texture grass = assetManager.loadTexture("Textures/Terrain/splat/grass.jpg");
-        grass.setWrap(WrapMode.Repeat);
-        matRock.setTexture("DiffuseMap", grass);
-        matRock.setFloat("DiffuseMap_0_scale", 64);
-        Texture dirt = assetManager.loadTexture("Textures/Terrain/splat/dirt.jpg");
-        dirt.setWrap(WrapMode.Repeat);
-        matRock.setTexture("DiffuseMap_1", dirt);
-        matRock.setFloat("DiffuseMap_1_scale", 16);
-        Texture rock = assetManager.loadTexture("Textures/Terrain/splat/road.jpg");
-        rock.setWrap(WrapMode.Repeat);
-        matRock.setTexture("DiffuseMap_2", rock);
-        matRock.setFloat("DiffuseMap_2_scale", 128);
-        Texture normalMap0 = assetManager.loadTexture("Textures/Terrain/splat/grass_normal.jpg");
-        normalMap0.setWrap(WrapMode.Repeat);
-        Texture normalMap1 = assetManager.loadTexture("Textures/Terrain/splat/dirt_normal.png");
-        normalMap1.setWrap(WrapMode.Repeat);
-        Texture normalMap2 = assetManager.loadTexture("Textures/Terrain/splat/road_normal.png");
-        normalMap2.setWrap(WrapMode.Repeat);
-        matRock.setTexture("NormalMap", normalMap0);
-        matRock.setTexture("NormalMap_1", normalMap2);
-        matRock.setTexture("NormalMap_2", normalMap2);
-
-        AbstractHeightMap heightmap = null;
-        try {
-            heightmap = new ImageBasedHeightMap(heightMapImage.getImage(), 0.25f);
-            heightmap.load();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        terrain = new TerrainQuad("terrain", 65, 513, heightmap.getHeightMap());
-        List<Camera> cameras = new ArrayList<Camera>();
-        cameras.add(getCamera());
-        TerrainLodControl control = new TerrainLodControl(terrain, cameras);
-        terrain.addControl(control);
-        terrain.setMaterial(matRock);
-        terrain.setLocalScale(new Vector3f(2, 2, 2));
-        terrain.setLocked(false); // unlock it so we can edit the height
-
-        terrain.setShadowMode(ShadowMode.CastAndReceive);
-        terrain.addControl(new RigidBodyControl(0));
-        rootNode.attachChild(terrain);
-        getPhysicsSpace().addAll(terrain);
+        assetManager.registerLocator("./assets", FileLocator.class);
+        terrain = new Terrain(bulletAppState,rootNode,assetManager);
+        terrain.setUpLighting();
+        terrain.setUpTerrain();
 
     }
 }

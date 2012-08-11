@@ -1,42 +1,31 @@
 package Game;
 
+import Controllers.PhysicsHoverControl;
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.scene.Geometry;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Cylinder;
 import com.jme3.system.AppSettings;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
 
 
 public class BattleForAdrastea extends SimpleApplication implements ActionListener, PhysicsTickListener {
     private Vehicle tank;
     private BulletAppState bulletAppState;
+    PhysicsHoverControl vehicleControl;
     
     private float wheelRadius;
     private float steeringValue = 0;
@@ -87,10 +76,13 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         tank = new Vehicle(bulletAppState,rootNode,assetManager);
         tank.makeTank();
         rootNode.attachChild(tank.getTank());
-        ////////////EERRRRROR HERE///////////////////////////////////////////////
+        ////////////EERRRRROR HERE NO MORE////////////////////////////////
         getPhysicsSpace().add(tank.getTankControl()); 
+           
+       
         
         ChaseCamera chaseCam = new ChaseCamera(cam, inputManager);
+        //.addControl(chaseCam);
         tank.getTank().addControl(chaseCam);
         flyCam.setEnabled(false);
         

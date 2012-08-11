@@ -39,8 +39,7 @@ public class Vehicle {
     public Vehicle (BulletAppState bulletAppState, Node rootNode, AssetManager assetManager) {
         this.assetManager = assetManager;
         this.rootNode = rootNode;
-        this.bulletAppState = bulletAppState;
-        
+        this.bulletAppState = bulletAppState;        
     }
     
     public Node getTank() {
