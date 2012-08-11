@@ -1,3 +1,0 @@
-Controllers.LoadingScreen
-Controllers.LoadingScreen$1
-Controllers.LoadingScreen$2
