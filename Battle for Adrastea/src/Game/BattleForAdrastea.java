@@ -35,9 +35,8 @@ import com.jme3.ui.Picture;
 
 
 public class BattleForAdrastea extends SimpleApplication implements ActionListener, PhysicsTickListener {
-    private Node tank;
+    private Vehicle tank;
     private BulletAppState bulletAppState;
-    private VehicleControl vehicleControl;
     
     private float wheelRadius;
     private float steeringValue = 0;
@@ -85,10 +84,12 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         terrain.setUpLighting();
         terrain.setUpTerrain();
         
-        Vehicle tank = new Vehicle(bulletAppState,rootNode,assetManager);
+        tank = new Vehicle(bulletAppState,rootNode,assetManager);
         tank.makeTank();
         rootNode.attachChild(tank.getTank());
-//        getPhysicsSpace().add(tank.getTankControl()); 
+        ////////////EERRRRROR HERE///////////////////////////////////////////////
+        getPhysicsSpace().add(tank.getTankControl()); 
+        
         ChaseCamera chaseCam = new ChaseCamera(cam, inputManager);
         tank.getTank().addControl(chaseCam);
         flyCam.setEnabled(false);
@@ -154,14 +155,14 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             } else {
                 steeringValue += -.5f;
             }
-            vehicleControl.steer(steeringValue);
+            tank.getTankControl().steer(steeringValue);
         } else if (binding.equals("Right")) {
             if (value) {
                 steeringValue += -.5f;
             } else {
                 steeringValue += .5f;
             }
-            vehicleControl.steer(steeringValue);
+             tank.getTankControl().steer(steeringValue);
         } //Backups
         else if (binding.equals("Up")) {
             if (value) {
@@ -169,13 +170,13 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             } else {
                 accelerationValue -= 800;
             }
-            vehicleControl.accelerate(accelerationValue);
+             tank.getTankControl().accelerate(accelerationValue);
             //vehicleControl.setCollisionShape(CollisionShapeFactory.createDynamicMeshShape(tank));
         } else if (binding.equals("Down")) {
             if (value) {
-                vehicleControl.brake(40f);
+                 tank.getTankControl().brake(40f);
             } else {
-                vehicleControl.brake(0f);
+                 tank.getTankControl().brake(0f);
             }
         }
     }

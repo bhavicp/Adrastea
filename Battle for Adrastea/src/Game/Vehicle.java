@@ -57,11 +57,11 @@ public class Vehicle {
         CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape(tank);
         tank.setShadowMode(ShadowMode.CastAndReceive);
         
-        this.vehicleControl = new PhysicsHoverControl(tankHull, 500);
-        this.vehicleControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+        vehicleControl = new PhysicsHoverControl(tankHull, 500);
+        vehicleControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         
-        tank.addControl(this.vehicleControl);
-        setUpWheels();
+        tank.addControl(vehicleControl);
+        //setUpWheels();
         //rootNode.attachChild(tank);
         //getPhysicsSpace().add(vehicleControl); 
         

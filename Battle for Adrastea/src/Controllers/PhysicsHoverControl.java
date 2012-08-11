@@ -196,7 +196,7 @@ public class PhysicsHoverControl extends PhysicsVehicle implements PhysicsContro
             }
             this.space = space;
         } else {
-            space.addCollisionObject(this);
+            //space.addCollisionObject(this);
             space.addTickListener(this);
         }
         this.space = space;
