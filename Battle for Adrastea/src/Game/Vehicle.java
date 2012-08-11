@@ -4,7 +4,6 @@
  */
 package Game;
 
-import Controllers.PhysicsHoverControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -19,7 +18,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Cylinder;
 
 /**
@@ -33,7 +31,7 @@ public class Vehicle {
     private Node rootNode;
     private BulletAppState bulletAppState;
     private Node tank;
-    private PhysicsHoverControl vehicleControl;
+    private VehicleControl vehicleControl;
     private float radius;
     
     public Vehicle (BulletAppState bulletAppState, Node rootNode, AssetManager assetManager) {
@@ -47,7 +45,7 @@ public class Vehicle {
         return this.tank;
     }
     
-    public PhysicsHoverControl getTankControl() {
+    public VehicleControl getTankControl() {
         return this.vehicleControl;
     }
     
@@ -56,15 +54,15 @@ public class Vehicle {
         CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape(tank);
         tank.setShadowMode(ShadowMode.CastAndReceive);
         
-        vehicleControl = new PhysicsHoverControl(tankHull, 500);
+        vehicleControl = new VehicleControl(tankHull, 500);
         vehicleControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         
         tank.addControl(vehicleControl);
-        //setUpWheels();
+        setUpWheels();
         //rootNode.attachChild(tank);
         //getPhysicsSpace().add(vehicleControl); 
         
-        vehicleControl.setPhysicsLocation(new Vector3f(0,10,0));
+        //vehicleControl.setPhysicsLocation(new Vector3f(0,10,0));
         //vehicleControl.accelerate(500f);
         
     

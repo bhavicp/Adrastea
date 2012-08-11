@@ -1,39 +1,26 @@
 package Game;
 
-import Controllers.PhysicsHoverControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.objects.VehicleWheel;
-import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.bullet.control.VehicleControl;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
-import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
 
 
-public class BattleForAdrastea extends SimpleApplication implements ActionListener, PhysicsTickListener {
+public class BattleForAdrastea extends SimpleApplication implements ActionListener{
     private Vehicle tank;
     private BulletAppState bulletAppState;
-    PhysicsHoverControl vehicleControl;
+    VehicleControl vehicleControl;
     
-    private float wheelRadius;
     private float steeringValue = 0;
     private float accelerationValue = 0;
-    private BoundingBox box;
-    private VehicleWheel fr, fl, br, bl;
-    private Node node_fr, node_fl, node_br, node_bl;
-    private float radius = 0.5f;
 
       
     public static void main(String[] args){
@@ -58,12 +45,12 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     @Override
     public void simpleInitApp() {
         flyCam.setMoveSpeed(50);
-        cam.setFrustumFar(150f);
-        
+        //cam.setFrustumFar(150f);
+
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-        bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0f,-10f,0f));
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        //bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0f,-10f,0f));
         
         setDisplayFps(false);
         setDisplayStatView(false);
@@ -82,7 +69,6 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
        
         
         ChaseCamera chaseCam = new ChaseCamera(cam, inputManager);
-        //.addControl(chaseCam);
         tank.getTank().addControl(chaseCam);
         flyCam.setEnabled(false);
         
@@ -143,44 +129,37 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         
        if (binding.equals("Left")) {
             if (value) {
-                steeringValue += .5f;
+                steeringValue += 1.5f;
             } else {
-                steeringValue += -.5f;
+                steeringValue += -1.5f;
             }
             tank.getTankControl().steer(steeringValue);
         } else if (binding.equals("Right")) {
             if (value) {
-                steeringValue += -.5f;
+                steeringValue += -1.5f;
             } else {
-                steeringValue += .5f;
+                steeringValue += 1.5f;
             }
              tank.getTankControl().steer(steeringValue);
         } //Backups
         else if (binding.equals("Up")) {
             if (value) {
-                accelerationValue += 800;
+                accelerationValue += 500;
             } else {
-                accelerationValue -= 800;
+                accelerationValue -= 500;
             }
              tank.getTankControl().accelerate(accelerationValue);
-            //vehicleControl.setCollisionShape(CollisionShapeFactory.createDynamicMeshShape(tank));
         } else if (binding.equals("Down")) {
             if (value) {
-                 tank.getTankControl().brake(40f);
+                 tank.getTankControl().brake(30f);
             } else {
                  tank.getTankControl().brake(0f);
             }
         }
     }
 
-    @Override
-    public void prePhysicsTick(PhysicsSpace ps, float f) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    @Override
-    public void physicsTick(PhysicsSpace ps, float f) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
+   
 }
 
