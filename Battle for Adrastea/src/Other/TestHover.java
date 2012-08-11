@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Game;
+package Other;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;

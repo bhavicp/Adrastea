@@ -29,8 +29,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package Game;
+package Other;
 
+import Controllers.BombControl;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
@@ -68,6 +69,7 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.List;
+import Controllers.PhysicsHoverControl;
 
 public class TestHoveringTank extends SimpleApplication implements AnalogListener,
         ActionListener {
