@@ -4,9 +4,11 @@
  */
 package Game;
 
+import Controllers.PhysicsHoverControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -14,6 +16,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.Control;
@@ -30,7 +33,7 @@ public class Vehicle {
     private Node rootNode;
     private BulletAppState bulletAppState;
     private Node tank;
-    private VehicleControl vehicleControl;
+    private PhysicsHoverControl vehicleControl;
     private float radius;
     
     public Vehicle (BulletAppState bulletAppState, Node rootNode, AssetManager assetManager) {
@@ -40,23 +43,31 @@ public class Vehicle {
         
     }
     
+    public Node getTank() {
+        
+        return this.tank;
+    }
+    
+    public PhysicsHoverControl getTankControl() {
+        return this.vehicleControl;
+    }
+    
     public void makeTank() {
-    tank = (Node) assetManager.loadModel("Models/Tank/HoverTank.blend");
-        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape((Node)tank);
+        tank = (Node) assetManager.loadModel("Models/Tank/HoverTank.blend");
+        CollisionShape tankHull = CollisionShapeFactory.createDynamicMeshShape(tank);
+        tank.setShadowMode(ShadowMode.CastAndReceive);
         
-        vehicleControl = new VehicleControl(tankHull, 400);
-        tank.addControl(vehicleControl);
+        this.vehicleControl = new PhysicsHoverControl(tankHull, 500);
+        this.vehicleControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         
-        vehicleControl.setCollideWithGroups(1);
-        vehicleControl.setCollisionGroup(1);
-        
-        
+        tank.addControl(this.vehicleControl);
         setUpWheels();
-        rootNode.attachChild(tank);
-        getPhysicsSpace().add(vehicleControl); 
+        //rootNode.attachChild(tank);
+        //getPhysicsSpace().add(vehicleControl); 
         
         vehicleControl.setPhysicsLocation(new Vector3f(0,10,0));
         //vehicleControl.accelerate(500f);
+        
     
     }
     

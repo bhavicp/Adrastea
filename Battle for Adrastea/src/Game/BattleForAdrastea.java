@@ -12,6 +12,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -86,6 +87,12 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         
         Vehicle tank = new Vehicle(bulletAppState,rootNode,assetManager);
         tank.makeTank();
+        rootNode.attachChild(tank.getTank());
+//        getPhysicsSpace().add(tank.getTankControl()); 
+        ChaseCamera chaseCam = new ChaseCamera(cam, inputManager);
+        tank.getTank().addControl(chaseCam);
+        flyCam.setEnabled(false);
+        
         setUpKeys();
         setUpHUD(); 
         
