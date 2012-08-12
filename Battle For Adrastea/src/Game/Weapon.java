@@ -21,16 +21,12 @@ import com.jme3.scene.Spatial;
  * @author bhavicp
  */
 public class Weapon {
-    private AssetManager assetManager;
     Spatial missile, mmissile;
     
-    public Weapon(AssetManager assestManager) {
-        this.assetManager = assestManager;
-        
-        
+    public Weapon(AssetManager assestManager) {       
         
         //Load Missile
-        mmissile = assetManager.loadModel("Models/Missle_model/TridentIV.mesh.xml");
+        mmissile = assestManager.loadModel("Models/Missle_model/TridentIV.mesh.xml");
         mmissile.scale(0.5f);
         mmissile.rotate(0, FastMath.PI, 0);
         mmissile.updateGeometricState();
@@ -47,7 +43,7 @@ public class Weapon {
     }
     
     
-    public void fireMissile(Vehicle vehicle) {
+    public void fireMissile(Vehicle vehicle, AssetManager assetManager) {
         Spatial tank = vehicle.getTank();
         
         missile = mmissile.clone();

@@ -117,7 +117,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
         } else if (binding.equals("Space") && value) {
 
             if(bulletCount > 0){
-                missile.fireMissile(mtank);
+                missile.fireMissile(mtank, assetManager);
                 rootNode.attachChild(missile.getMissile());
                 getPhysicsSpace().add(missile.getMissile());
                 setBulletCount(bulletCount--);
@@ -230,9 +230,10 @@ public class Application extends SimpleApplication implements ActionListener, Sc
 
             setProgress(0.3f, "Loading Terrain");
             //Terrain
-            terrain = new Terrain(bulletAppState, assetManager);
-            terrain.setUpLighting();
-            terrain.setUpTerrain();
+            terrain = new Terrain();
+            terrain.setUpLighting(assetManager);
+            terrain.setUpTerrain(assetManager);
+            getPhysicsSpace().add(terrain.getFloorPhysics());
             
             setProgress(0.3f, "Loading Enemy");
             //set enemy here

@@ -23,33 +23,27 @@ import com.jme3.texture.Texture;
  * @author Shane
  */
 public class Terrain {
-    
-    private AssetManager assetManager;
-    private BulletAppState bulletAppState;
-    private DirectionalLight dl;
-            private DirectionalLight dl2;
-            private Geometry floor_geo;
-    
-     public Terrain (BulletAppState bulletAppState, AssetManager assetManager) {
-        this.assetManager = assetManager;
-        this.bulletAppState = bulletAppState;
         
-    }
+    private DirectionalLight dl;
+    private DirectionalLight dl2;
+    private Geometry floor_geo;
+    private RigidBodyControl floor_phy;
+         
      
-     public void setUpLighting() {
+     public void setUpLighting(AssetManager assetManager) {
          dl = new DirectionalLight();
         dl.setColor(new ColorRGBA(1.0f, 0.94f, 0.8f, 1f).multLocal(1.3f));
         dl.setDirection(new Vector3f(-0.5f, -0.3f, -0.3f).normalizeLocal());
         
 
         Vector3f lightDir2 = new Vector3f(0.70518064f, 0.5902297f, -0.39287305f);
-         dl2 = new DirectionalLight();
+        dl2 = new DirectionalLight();
         dl2.setColor(new ColorRGBA(0.7f, 0.85f, 1.0f, 1f));
         dl2.setDirection(lightDir2);
         
     }
      
-     public void setUpTerrain() {
+     public void setUpTerrain(AssetManager assetManager) {         
         Material floor_mat = new Material(assetManager, "Common/MatDefs/Misc/ColoredTextured.j3md");
         TextureKey key3 = new TextureKey("Textures/dirt.jpg");
         key3.setGenerateMips(true);
@@ -65,9 +59,8 @@ public class Terrain {
         floor_geo.setLocalTranslation(0, -1f, 0);
         
         /* Make the floor physical with mass 0.0f! */
-        RigidBodyControl floor_phy = new RigidBodyControl(0.0f);
-        floor_geo.addControl(floor_phy);
-        bulletAppState.getPhysicsSpace().add(floor_phy);
+        floor_phy = new RigidBodyControl(0.0f);
+        floor_geo.addControl(floor_phy);    
      }
      
      public void addLightToNode(Node rootNode){
@@ -77,5 +70,9 @@ public class Terrain {
      
      public void addTerrainToNode(Node rootNode){
          rootNode.attachChild(floor_geo);
+     }
+     
+     public RigidBodyControl getFloorPhysics(){
+         return floor_phy;
      }
 }
