@@ -73,13 +73,14 @@ public class GUI extends SimpleApplication implements ScreenController, Controll
             }
             
             if(loadFuture.isDone()){
-                nifty.gotoScreen("end");
+                nifty.gotoScreen("hud");
                 nifty.exit();
                 guiViewPort.removeProcessor(niftyDisplay);
                 flyCam.setEnabled(true);
                 flyCam.setMoveSpeed(50);
                 //rootNode.attachChild(terrain);
                 load = false;
+                
             }
         }
     }
@@ -113,6 +114,7 @@ public class GUI extends SimpleApplication implements ScreenController, Controll
             Thread.sleep(200);
             setProgress(1f, "Loading complete");
             Thread.sleep(200);
+           
             return null;
         }
         
@@ -137,8 +139,7 @@ public class GUI extends SimpleApplication implements ScreenController, Controll
         nifty.gotoScreen("loadlevel");
         load = true;
     }  
-
-     
+          
     @Override
     public void bind(Nifty nifty, Screen screen, Element element, Properties parameter, Attributes controlDefinitionAttributes) {
         progressBarElement = element.findElementByName("progressbar");

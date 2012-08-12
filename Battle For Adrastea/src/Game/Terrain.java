@@ -25,27 +25,28 @@ import com.jme3.texture.Texture;
 public class Terrain {
     
     private AssetManager assetManager;
-    private Node rootNode;
     private BulletAppState bulletAppState;
+    private DirectionalLight dl;
+            private DirectionalLight dl2;
+            private Geometry floor_geo;
     
-     public Terrain (BulletAppState bulletAppState, Node rootNode, AssetManager assetManager) {
+     public Terrain (BulletAppState bulletAppState, AssetManager assetManager) {
         this.assetManager = assetManager;
-        this.rootNode = rootNode;
         this.bulletAppState = bulletAppState;
         
     }
      
      public void setUpLighting() {
-        DirectionalLight dl = new DirectionalLight();
+         dl = new DirectionalLight();
         dl.setColor(new ColorRGBA(1.0f, 0.94f, 0.8f, 1f).multLocal(1.3f));
         dl.setDirection(new Vector3f(-0.5f, -0.3f, -0.3f).normalizeLocal());
-        rootNode.addLight(dl);
+        
 
         Vector3f lightDir2 = new Vector3f(0.70518064f, 0.5902297f, -0.39287305f);
-        DirectionalLight dl2 = new DirectionalLight();
+         dl2 = new DirectionalLight();
         dl2.setColor(new ColorRGBA(0.7f, 0.85f, 1.0f, 1f));
         dl2.setDirection(lightDir2);
-        rootNode.addLight(dl2);
+        
     }
      
      public void setUpTerrain() {
@@ -59,13 +60,22 @@ public class Terrain {
         Box floor = new Box(Vector3f.ZERO, 512f, 0.1f, 512f);
         floor.scaleTextureCoordinates(new Vector2f(3, 6));
         
-        Geometry floor_geo = new Geometry("Floor", floor);
+        floor_geo = new Geometry("Floor", floor);
         floor_geo.setMaterial(floor_mat);
         floor_geo.setLocalTranslation(0, -1f, 0);
-        this.rootNode.attachChild(floor_geo);
+        
         /* Make the floor physical with mass 0.0f! */
         RigidBodyControl floor_phy = new RigidBodyControl(0.0f);
         floor_geo.addControl(floor_phy);
         bulletAppState.getPhysicsSpace().add(floor_phy);
+     }
+     
+     public void addLightToNode(Node rootNode){
+         rootNode.addLight(dl);
+         rootNode.addLight(dl2);
+     }
+     
+     public void addTerrainToNode(Node rootNode){
+         rootNode.attachChild(floor_geo);
      }
 }
