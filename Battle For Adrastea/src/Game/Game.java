@@ -4,16 +4,9 @@
  */
 package Game;
 
-import Game.Terrain;
-import Game.Terrain;
-import Game.Vehicle;
-import Game.Vehicle;
-import Game.Weapon;
-import Game.Weapon;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.AudioNode;
-
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.KeyInput;
@@ -62,13 +55,14 @@ public class Game extends SimpleApplication implements ActionListener, ScreenCon
 
     private AudioNode audio_gun;
     private AudioNode audio_nature;
+    
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
         loadGUI();
         
-        setMissileCount(missileCount);
         setBulletCount(bulletCount);
+        setMissileCount(missileCount);
     }
 
     public static void main(String[] args) {
@@ -158,7 +152,8 @@ public class Game extends SimpleApplication implements ActionListener, ScreenCon
                 
                 terrain.addLightToNode(rootNode);
                 terrain.addTerrainToNode(rootNode);
-                rootNode.attachChild(mtank.getTank());               
+                rootNode.attachChild(mtank.getTank());
+                
                 
                 load = false;
                 objectsAdded = true;
@@ -223,8 +218,7 @@ public class Game extends SimpleApplication implements ActionListener, ScreenCon
         nifty = niftyDisplay.getNifty();
 
         nifty.fromXml("Interface/GUI.xml", "loadlevel", this);
-        guiViewPort.addProcessor(niftyDisplay);       
-        
+        guiViewPort.addProcessor(niftyDisplay);
     }
     
     Callable<Void> loadingCallable = new Callable<Void>() {
@@ -296,17 +290,17 @@ public class Game extends SimpleApplication implements ActionListener, ScreenCon
     /* gun shot sound is to be triggered by a mouse click. */
     audio_gun = new AudioNode(assetManager, "Sound/Shot.wav", false);
     audio_gun.setLooping(false);
-    audio_gun.setVolume(2);
+    audio_gun.setVolume(0.5f);
     rootNode.attachChild(audio_gun);
  
     /* nature sound - keeps playing in a loop. */
-    audio_nature = new AudioNode(assetManager, "Sound/Hovertank_sound.wav", false);
-    audio_nature.setLooping(true);  // activate continuous playing
-    audio_nature.setPositional(true);
-    audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
-    audio_nature.setVolume(3);
-    rootNode.attachChild(audio_nature);
-    audio_nature.play(); // play continuously!
+//    audio_nature = new AudioNode(assetManager, "Sound/Hovertank_sound.wav", false);
+//    audio_nature.setLooping(true);  // activate continuous playing
+//    audio_nature.setPositional(true);
+//    audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
+//    audio_nature.setVolume(3);
+//    rootNode.attachChild(audio_nature);
+//    audio_nature.play(); // play continuously!
   }
 
     @Override

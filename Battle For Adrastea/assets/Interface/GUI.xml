@@ -4,7 +4,7 @@
     <useControls filename="nifty-default-controls.xml" />
 
     
-    <controlDefinition name = "loadingbar" controller = "Game.Application">
+    <controlDefinition name = "loadingbar" controller = "Game.Game">
         <image filename="Textures/border.png" childLayout="absolute" 
                imageMode="resize:15,2,15,15,15,2,15,2,15,2,15,15">
             <image id="progressbar" x="0" y="0" filename="Textures/inner.png" width="32px" height="100%"
@@ -12,7 +12,7 @@
         </image>
     </controlDefinition>
             
-    <screen id="start" controller = "Game.Application">
+    <screen id="start" controller = "Game.Game">
         <layer id="layer" childLayout="center">
             <panel id = "panel2" height="30%" width="50%" align="center" valign="center" childLayout="vertical"
                    visibleToMouse="true">
@@ -23,7 +23,7 @@
         </layer>
     </screen>
     
-    <screen id="loadlevel" controller = "Game.Application">
+    <screen id="loadlevel" controller = "Game.Game">
         <layer id="loadinglayer" childLayout="center" backgroundColor="#0000">
             <panel id = "loadingpanel" childLayout="vertical" align="center" valign="center" height="32px" width="400px">
                 <control name="loadingbar" align="center" valign="center" width="400px" height="32px" />
@@ -33,7 +33,7 @@
         </layer>
     </screen>
     
-    <screen id="hud" controller="Game.Application">
+    <screen id="hud" controller="Game.Game">
         <layer id="foreground" childLayout="horizontal" >
             <panel id="panel_top_left" height="78px" width="178px" align="center" childLayout="center" >  
                 <image filename="Textures/MissileDisplay.png" childLayout="absolute">
