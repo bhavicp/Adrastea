@@ -52,9 +52,31 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
-        loadGUI();
+        //loadGUI();
 
+//Need for physics
+            bulletAppState = new BulletAppState();
+            stateManager.attach(bulletAppState);
+            //Debugging
+            bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
+            //Terrain
+            terrain = new Terrain(bulletAppState, assetManager);
+            terrain.setUpLighting();
+            terrain.setUpTerrain();
+
+            //Tank
+            mtank = new Vehicle(assetManager);
+            getPhysicsSpace().add(mtank.getVehicleControl());
+
+            setupKeys(); //This is to set bindings
+
+            //Missile
+            missile = new Weapon(assetManager);
+            
+            terrain.addLightToNode(rootNode);
+            terrain.addTerrainToNode(rootNode);
+            rootNode.attachChild(mtank.getTank());
 
 
         //Camera
@@ -185,6 +207,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         nifty.fromXml("Interface/GUI.xml", "start", this);
         guiViewPort.addProcessor(niftyDisplay);
     }
+    
     Callable<Void> loadingCallable = new Callable<Void>() {
 
         @Override

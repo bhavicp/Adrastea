@@ -73,7 +73,7 @@ public class GUI extends SimpleApplication implements ScreenController, Controll
             }
             
             if(loadFuture.isDone()){
-                nifty.gotoScreen("hud");
+                nifty.gotoScreen("end");
                 nifty.exit();
                 guiViewPort.removeProcessor(niftyDisplay);
                 flyCam.setEnabled(true);
