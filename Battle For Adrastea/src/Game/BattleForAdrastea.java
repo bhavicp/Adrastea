@@ -48,6 +48,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private Future loadFuture = null;
     private TextRenderer textRenderer;
     private Element progressBarElement;
+    private Character alien;
 
     @Override
     public void simpleInitApp() {
@@ -77,6 +78,11 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             terrain.addLightToNode(rootNode);
             terrain.addTerrainToNode(rootNode);
             rootNode.attachChild(mtank.getTank());
+            
+            //Chara
+            alien = new Character(bulletAppState, assetManager);
+            rootNode.attachChild(alien.getChar());
+            getPhysicsSpace().add(alien.getControl());
 
 
         //Camera
