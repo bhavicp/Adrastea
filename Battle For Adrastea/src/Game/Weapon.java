@@ -26,24 +26,13 @@ public class Weapon {
     
     public Weapon(AssetManager assestManager) {
         this.assetManager = assestManager;
-        
-        
-        
         //Load Missile
         mmissile = assetManager.loadModel("Models/Missle_model/TridentIV.mesh.xml");
         mmissile.scale(0.5f);
         mmissile.rotate(0, FastMath.PI, 0);
         mmissile.updateGeometricState();
-
-        
-        
-
-        
-
         mmissile.setName("Missile");
-        
-        
-        
+  
     }
     
     
@@ -54,6 +43,7 @@ public class Weapon {
         Vector3f pos = tank.getWorldTranslation().clone();
         Quaternion rot = tank.getWorldRotation();
         Vector3f dir = rot.getRotationColumn(2);
+        
         BoundingBox box = (BoundingBox) missile.getWorldBound();
         final Vector3f extent = box.getExtent(null);
         BoxCollisionShape boxShape = new BoxCollisionShape(extent);
@@ -62,7 +52,7 @@ public class Weapon {
         missile.setLocalTranslation(pos.addLocal(0, extent.y * 4.5f, 0));
        
         missile.setLocalRotation(vehicle.getVehicleControl().getPhysicsRotation());
-        missile.setShadowMode(ShadowMode.Cast);
+        //missile.setShadowMode(ShadowMode.Cast);
         RigidBodyControl control = new BombControl(assetManager, boxShape, 20);
         control.setLinearVelocity(dir.mult(100));
         control.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);

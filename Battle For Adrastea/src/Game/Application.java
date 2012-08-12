@@ -4,9 +4,6 @@
  */
 package Game;
 
-import Game.Terrain;
-import Game.Vehicle;
-import Game.Weapon;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
