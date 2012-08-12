@@ -29,16 +29,8 @@ public class Weapon {
         mmissile = assestManager.loadModel("Models/Missle_model/TridentIV.mesh.xml");
         mmissile.scale(0.5f);
         mmissile.rotate(0, FastMath.PI, 0);
-        mmissile.updateGeometricState();
-
-        
-        
-
-        
-
+        mmissile.updateGeometricState();        
         mmissile.setName("Missile");
-        
-        
         
     }
     

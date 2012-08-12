@@ -39,7 +39,7 @@
                 <image filename="Textures/MissileDisplay.png" childLayout="absolute">
                    
                     <control id="missiletext" name="label" align="center" y="30" x="80"
-                          text="1000" color="#000F" />
+                          text="xxxx" color="#000F" />
                           
                 </image>
             </panel>
@@ -47,7 +47,7 @@
             <panel id="panel_top_right" height="78px" width="178px" align="center" childLayout="center" >
                 <image filename="Textures/BulletDisplay.png" childLayout="absolute" >
                     <control id="bullettext" name="label" align="left" y="30" x="70"
-                          text="1000" color="#000F" />
+                          text="xxxx" color="#000F" />
                 </image>
             </panel>   
         </layer>    

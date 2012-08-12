@@ -49,12 +49,16 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     private TextRenderer textRenderer;
     private Element progressBarElement;
     private boolean objectsAdded = false;
-    private int bulletCount = 1000;
+    private int bulletCount = 10;
+    private int missileCount= 10;
 
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
         loadGUI();
+        
+        setMissileCount(missileCount);
+        setBulletCount(bulletCount);
     }
 
     public static void main(String[] args) {
@@ -117,7 +121,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
                 missile.fireMissile(mtank, assetManager);
                 rootNode.attachChild(missile.getMissile());
                 getPhysicsSpace().add(missile.getMissile());
-                setBulletCount(bulletCount--);
+                bulletCount--;
+                setBulletCount(bulletCount);
             }
         }
     }
@@ -142,8 +147,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
                 
                 terrain.addLightToNode(rootNode);
                 terrain.addTerrainToNode(rootNode);
-                rootNode.attachChild(mtank.getTank());
-                
+                rootNode.attachChild(mtank.getTank());               
                 
                 load = false;
                 objectsAdded = true;
@@ -208,7 +212,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
         nifty = niftyDisplay.getNifty();
 
         nifty.fromXml("Interface/GUI.xml", "loadlevel", this);
-        guiViewPort.addProcessor(niftyDisplay);
+        guiViewPort.addProcessor(niftyDisplay);       
+        
     }
     
     Callable<Void> loadingCallable = new Callable<Void>() {
