@@ -284,14 +284,14 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     /* gun shot sound is to be triggered by a mouse click. */
     audio_gun = new AudioNode(assetManager, "Sound/Shot.wav", false);
     audio_gun.setLooping(false);
-    audio_gun.setVolume(2);
+    audio_gun.setVolume(0.5f);
     rootNode.attachChild(audio_gun);
  
     /* nature sound - keeps playing in a loop. */
     audio_nature = new AudioNode(assetManager, "Sound/Hovertank_sound.wav", false);
     audio_nature.setLooping(true);  // activate continuous playing
     audio_nature.setPositional(true);
-    audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
+    //audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
     audio_nature.setVolume(3);
     rootNode.attachChild(audio_nature);
     audio_nature.play(); // play continuously!
