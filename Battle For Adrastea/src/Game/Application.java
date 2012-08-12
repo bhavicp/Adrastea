@@ -46,7 +46,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     private Weapon missile;
     private NiftyJmeDisplay niftyDisplay;
     private Nifty nifty;
-    private boolean load = false;
+    private boolean load = true;
     private ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
     private Future loadFuture = null;
     private TextRenderer textRenderer;
@@ -210,7 +210,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, viewPort);
         nifty = niftyDisplay.getNifty();
 
-        nifty.fromXml("Interface/GUI.xml", "start", this);
+        nifty.fromXml("Interface/GUI.xml", "loadlevel", this);
         guiViewPort.addProcessor(niftyDisplay);
     }
     
