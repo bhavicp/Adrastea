@@ -6,6 +6,7 @@ package Game;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.KeyInput;
@@ -51,6 +52,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     private boolean objectsAdded = false;
     private int bulletCount = 1000;
 
+    private AudioNode audio_gun;
+    private AudioNode audio_nature;
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
@@ -118,6 +121,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
                 rootNode.attachChild(missile.getMissile());
                 getPhysicsSpace().add(missile.getMissile());
                 setBulletCount(bulletCount--);
+                audio_gun.playInstance();
             }
         }
     }
@@ -242,7 +246,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
             
             setProgress(0.5f, "Loading Sound");
             //set sound here
-
+            initAudio();
+            
             setProgress(0.6f, "Setting Up Keys");
             setupKeys(); //This is to set bindings
 
@@ -274,6 +279,23 @@ public class Application extends SimpleApplication implements ActionListener, Sc
             }
         });
     }
+    
+    private void initAudio() {
+    /* gun shot sound is to be triggered by a mouse click. */
+    audio_gun = new AudioNode(assetManager, "Sound/Shot.wav", false);
+    audio_gun.setLooping(false);
+    audio_gun.setVolume(2);
+    rootNode.attachChild(audio_gun);
+ 
+    /* nature sound - keeps playing in a loop. */
+    audio_nature = new AudioNode(assetManager, "Sound/Hovertank_sound.wav", false);
+    audio_nature.setLooping(true);  // activate continuous playing
+    audio_nature.setPositional(true);
+    audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
+    audio_nature.setVolume(3);
+    rootNode.attachChild(audio_nature);
+    audio_nature.play(); // play continuously!
+  }
 
     @Override
     public void bind(Nifty nifty, Screen screen, Element element, Properties parameter, Attributes controlDefinitionAttributes) {
