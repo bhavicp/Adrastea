@@ -48,35 +48,15 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private Future loadFuture = null;
     private TextRenderer textRenderer;
     private Element progressBarElement;
+    private boolean objectsAdded = false;
+    private int bulletCount = 1000;
 
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
-        //loadGUI();
+        loadGUI();
 
-//Need for physics
-            bulletAppState = new BulletAppState();
-            stateManager.attach(bulletAppState);
-            //Debugging
-            bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-            //Terrain
-            terrain = new Terrain(bulletAppState, assetManager);
-            terrain.setUpLighting();
-            terrain.setUpTerrain();
-
-            //Tank
-            mtank = new Vehicle(assetManager);
-            getPhysicsSpace().add(mtank.getVehicleControl());
-
-            setupKeys(); //This is to set bindings
-
-            //Missile
-            missile = new Weapon(assetManager);
-            
-            terrain.addLightToNode(rootNode);
-            terrain.addTerrainToNode(rootNode);
-            rootNode.attachChild(mtank.getTank());
 
 
         //Camera
@@ -144,45 +124,30 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             }
         } else if (binding.equals("Space") && value) {
 
-            missile.fireMissile(mtank);
-            rootNode.attachChild(missile.getMissile());
-            getPhysicsSpace().add(missile.getMissile());
+            if(bulletCount > 0){
+                missile.fireMissile(mtank);
+                rootNode.attachChild(missile.getMissile());
+                getPhysicsSpace().add(missile.getMissile());
+                setBulletCount(bulletCount--);
+            }
         }
     }
     public static final Quaternion PITCH011_25 = new Quaternion().fromAngleAxis(FastMath.PI / 16, new Vector3f(1, 0, 0));
 
     @Override
     public void simpleUpdate(float tpf) {
-        //cam.lookAt(mtank.getVehicleControl().getPhysicsLocation(), Vector3f.UNIT_Y);
-        //cam.lookAt(mtank.getTank().getWorldTranslation(), Vector3f.UNIT_Y);
-
-        //Try this new one
-        Vector3f vLoc = mtank.getTank().getWorldTranslation();
-        Quaternion qRot = mtank.getTank().getWorldRotation().clone();
-
-        //pitch the rotation a bit down --- so you look towards the bottom, used for setting camera rotation later
-        qRot.normalizeLocal();
-        qRot.multLocal(PITCH011_25);
-        //set the pitched down rotation of the car - look a bit to the bottom
-        cam.setRotation(qRot);
-        //get the forward direction of the vehicle
-        Vector3f vRot = mtank.getVehicleControl().getForwardVector(null).mult(5f);
-
-
-        //calculate the position of the camera (above car), using the vehicles position and the vehicles forward direction
-        Vector3f vPos = new Vector3f(vLoc.x - vRot.x, vLoc.y + 3.5f, vLoc.z - vRot.z);
-        //set the position of camera
-        cam.setLocation(vPos);
+        
 
         if (load) {
             if (loadFuture == null) {
                 loadFuture = exec.submit(loadingCallable);
             }
 
-            if (loadFuture.isDone()) {
-                nifty.gotoScreen("end");
-                nifty.exit();
-                guiViewPort.removeProcessor(niftyDisplay);
+            if (loadFuture.isDone()) {                
+                nifty.gotoScreen("hud");
+                exec.shutdown();
+                //nifty.exit();
+                //guiViewPort.removeProcessor(niftyDisplay);
                 flyCam.setEnabled(true);
                 flyCam.setMoveSpeed(10);
                 
@@ -192,8 +157,57 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
                 
                 
                 load = false;
+                objectsAdded = true;
             }
         }
+        if(objectsAdded){
+            //cam.lookAt(mtank.getVehicleControl().getPhysicsLocation(), Vector3f.UNIT_Y);
+            //cam.lookAt(mtank.getTank().getWorldTranslation(), Vector3f.UNIT_Y);
+
+            //Try this new one
+            Vector3f vLoc = mtank.getTank().getWorldTranslation();
+            Quaternion qRot = mtank.getTank().getWorldRotation().clone();
+
+            //pitch the rotation a bit down --- so you look towards the bottom, used for setting camera rotation later
+            qRot.normalizeLocal();
+            qRot.multLocal(PITCH011_25);
+            //set the pitched down rotation of the car - look a bit to the bottom
+            cam.setRotation(qRot);
+            //get the forward direction of the vehicle
+            Vector3f vRot = mtank.getVehicleControl().getForwardVector(null).mult(5f);
+
+
+            //calculate the position of the camera (above car), using the vehicles position and the vehicles forward direction
+            Vector3f vPos = new Vector3f(vLoc.x - vRot.x, vLoc.y + 3.5f, vLoc.z - vRot.z);
+            //set the position of camera
+            cam.setLocation(vPos);
+        }
+    }    
+    
+    public void setBulletCount(final int count) {
+        enqueue(new Callable() {
+
+            @Override
+            public Object call() throws Exception {
+                Element element = nifty.getScreen("hud").findElementByName("bullettext");
+                textRenderer = element.getRenderer(TextRenderer.class);
+                textRenderer.setText(String.valueOf(count));
+                return null;
+            }
+        });
+    }
+
+    public void setMissileCount(final int count) {
+        enqueue(new Callable() {
+
+            @Override
+            public Object call() throws Exception {
+                Element element = nifty.getScreen("hud").findElementByName("missiletext");
+                textRenderer = element.getRenderer(TextRenderer.class);
+                textRenderer.setText(String.valueOf(count));
+                return null;
+            }
+        });
     }
 
     private void loadGUI() {
@@ -215,62 +229,38 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             Element element = nifty.getScreen("loadlevel").findElementByName("loadingtext");
             textRenderer = element.getRenderer(TextRenderer.class);
 
-
+            setProgress(0.2f, "Loading Physics Space");
             //Need for physics
             bulletAppState = new BulletAppState();
             stateManager.attach(bulletAppState);
             //Debugging
             bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
+            setProgress(0.2f, "Loading Terrain");
             //Terrain
             terrain = new Terrain(bulletAppState, assetManager);
             terrain.setUpLighting();
             terrain.setUpTerrain();
 
+            setProgress(0.4f, "Loading Tank");
             //Tank
             mtank = new Vehicle(assetManager);
             getPhysicsSpace().add(mtank.getVehicleControl());
 
+            setProgress(0.6f, "Setting Up Keys");
             setupKeys(); //This is to set bindings
 
+            setProgress(0.8f, "Loading Missile");
             //Missile
             missile = new Weapon(assetManager);
 
-
-
-            //setProgress is thread safe (see below)
-            setProgress(0.2f, "Loading grass");
-
-            Thread.sleep(200);
-            setProgress(0.4f, "Loading dirt");
-
-            Thread.sleep(200);
-            setProgress(0.5f, "Loading rocks");
-            Thread.sleep(200);
-
-            setProgress(0.6f, "Creating terrain");
-
-            Thread.sleep(200);
-            setProgress(0.8f, "Positioning terrain");
-
-            Thread.sleep(200);
-            setProgress(0.9f, "Loading cameras");
-
-            Thread.sleep(200);
             setProgress(1f, "Loading complete");
-            Thread.sleep(200);
-            showHUD();
             return null;
         }
     };
 
     public void showLoadingMenu() {
         nifty.gotoScreen("loadlevel");
-        load = true;
-    }
-    
-    public void showHUD() {
-        nifty.gotoScreen("hud");
         load = true;
     }
 
@@ -301,26 +291,22 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
 
     @Override
     public void onStartScreen() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void onEndScreen() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void init(Properties prprts, Attributes atrbts) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void onFocus(boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean inputEvent(NiftyInputEvent nie) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
 }
