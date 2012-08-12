@@ -31,6 +31,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+
+
 /**
  *
  * @author Shane
@@ -48,6 +50,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
     private Future loadFuture = null;
     private TextRenderer textRenderer;
     private Element progressBarElement;
+    private Character alien;
     private boolean objectsAdded = false;
     private int bulletCount = 1000;
 
@@ -57,6 +60,21 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
         loadGUI();
 
 
+
+
+            setupKeys(); //This is to set bindings
+
+            //Missile
+            missile = new Weapon(assetManager);
+            
+            terrain.addLightToNode(rootNode);
+            terrain.addTerrainToNode(rootNode);
+            rootNode.attachChild(mtank.getTank());
+            
+            //Chara
+            alien = new Character(bulletAppState, assetManager);
+            rootNode.attachChild(alien.getChar());
+            getPhysicsSpace().add(alien.getControl());
 
 
         //Camera
@@ -132,6 +150,7 @@ public class BattleForAdrastea extends SimpleApplication implements ActionListen
             }
         }
     }
+    
     public static final Quaternion PITCH011_25 = new Quaternion().fromAngleAxis(FastMath.PI / 16, new Vector3f(1, 0, 0));
 
     @Override
