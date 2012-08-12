@@ -58,17 +58,6 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
         loadGUI();
-
-
-
-
-        //Camera
-//        ChaseCamera chaseCam = new ChaseCamera(cam, inputManager);
-//        this.mtank.addTankControl(chaseCam);
-//        flyCam.setEnabled(false);
-
-
-
     }
 
     public static void main(String[] args) {
@@ -239,16 +228,22 @@ public class Application extends SimpleApplication implements ActionListener, Sc
             //Debugging
            // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-            setProgress(0.2f, "Loading Terrain");
+            setProgress(0.3f, "Loading Terrain");
             //Terrain
             terrain = new Terrain(bulletAppState, assetManager);
             terrain.setUpLighting();
             terrain.setUpTerrain();
+            
+            setProgress(0.3f, "Loading Enemy");
+            //set enemy here
 
             setProgress(0.4f, "Loading Tank");
             //Tank
             mtank = new Vehicle(assetManager);
             getPhysicsSpace().add(mtank.getVehicleControl());
+            
+            setProgress(0.5f, "Loading Sound");
+            //set sound here
 
             setProgress(0.6f, "Setting Up Keys");
             setupKeys(); //This is to set bindings

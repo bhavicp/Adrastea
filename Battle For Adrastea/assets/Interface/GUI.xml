@@ -53,9 +53,4 @@
         </layer>    
     </screen>
     
-    
-    <screen id="end" controller = "Game.Application">
-        <layer id="end"></layer>
-    </screen>   
-  
 </nifty>
