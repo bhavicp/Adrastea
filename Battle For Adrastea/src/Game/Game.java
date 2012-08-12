@@ -4,8 +4,16 @@
  */
 package Game;
 
+import Game.Terrain;
+import Game.Terrain;
+import Game.Vehicle;
+import Game.Vehicle;
+import Game.Weapon;
+import Game.Weapon;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.audio.AudioNode;
+
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.input.KeyInput;
@@ -35,7 +43,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  *
  * @author Shane
  */
-public class Application extends SimpleApplication implements ActionListener, ScreenController, Controller {
+public class Game extends SimpleApplication implements ActionListener, ScreenController, Controller {
 
     private BulletAppState bulletAppState;
     private Terrain terrain;
@@ -52,6 +60,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
     private int bulletCount = 10;
     private int missileCount= 10;
 
+    private AudioNode audio_gun;
+    private AudioNode audio_nature;
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("./assets", FileLocator.class);
@@ -72,7 +82,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
         gameSettings.setSamples(0);
         gameSettings.setRenderer("LWJGL-OpenGL2");
 
-        Application app = new Application();
+        Game app = new Game();
         app.setSettings(gameSettings);
         app.setShowSettings(false);
         app.start();
@@ -123,6 +133,7 @@ public class Application extends SimpleApplication implements ActionListener, Sc
                 getPhysicsSpace().add(missile.getMissile());
                 bulletCount--;
                 setBulletCount(bulletCount);
+                audio_gun.playInstance();
             }
         }
     }
@@ -247,7 +258,8 @@ public class Application extends SimpleApplication implements ActionListener, Sc
             
             setProgress(0.5f, "Loading Sound");
             //set sound here
-
+            initAudio();
+            
             setProgress(0.6f, "Setting Up Keys");
             setupKeys(); //This is to set bindings
 
@@ -279,6 +291,23 @@ public class Application extends SimpleApplication implements ActionListener, Sc
             }
         });
     }
+    
+    private void initAudio() {
+    /* gun shot sound is to be triggered by a mouse click. */
+    audio_gun = new AudioNode(assetManager, "Sound/Shot.wav", false);
+    audio_gun.setLooping(false);
+    audio_gun.setVolume(0.5f);
+    rootNode.attachChild(audio_gun);
+ 
+    /* nature sound - keeps playing in a loop. */
+    audio_nature = new AudioNode(assetManager, "Sound/Hovertank_sound.wav", false);
+    audio_nature.setLooping(true);  // activate continuous playing
+    audio_nature.setPositional(true);
+    //audio_nature.setLocalTranslation(Vector3f.ZERO.clone());
+    audio_nature.setVolume(3);
+    rootNode.attachChild(audio_nature);
+    audio_nature.play(); // play continuously!
+  }
 
     @Override
     public void bind(Nifty nifty, Screen screen, Element element, Properties parameter, Attributes controlDefinitionAttributes) {
